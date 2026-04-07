@@ -3,28 +3,83 @@
 type Item = {
   name: string;
   desc: string;
-  price: string;
+  price: number;
   category: string;
 };
 
 const data: Item[] = [
+  // ☕ Coffee & Drinks
   {
     name: "Espresso",
-    desc: "Single shot of premium espresso",
-    price: "$3.50",
+    desc: "Strong single shot coffee",
+    price: 120,
     category: "Coffee & Drinks",
   },
   {
     name: "Cappuccino",
-    desc: "Espresso with steamed milk & foam",
-    price: "$4.50",
+    desc: "Coffee with steamed milk foam",
+    price: 180,
     category: "Coffee & Drinks",
   },
   {
+    name: "Cold Coffee",
+    desc: "Chilled creamy coffee",
+    price: 150,
+    category: "Coffee & Drinks",
+  },
+
+  // 🍔 Food & Sandwiches
+  {
     name: "Veg Sandwich",
-    desc: "Fresh & tasty sandwich",
-    price: "$5.00",
+    desc: "Grilled sandwich with veggies",
+    price: 100,
     category: "Food & Sandwiches",
+  },
+  {
+    name: "Paneer Burger",
+    desc: "Spicy paneer patty burger",
+    price: 140,
+    category: "Food & Sandwiches",
+  },
+  {
+    name: "French Fries",
+    desc: "Crispy salted fries",
+    price: 90,
+    category: "Food & Sandwiches",
+  },
+
+  // 🍜 Chinese
+  {
+    name: "Veg Chowmein",
+    desc: "Stir fried noodles with veggies",
+    price: 130,
+    category: "Chinese",
+  },
+  {
+    name: "Fried Rice",
+    desc: "Chinese style rice with sauces",
+    price: 140,
+    category: "Chinese",
+  },
+  {
+    name: "Chilli Paneer",
+    desc: "Spicy paneer in Chinese sauce",
+    price: 180,
+    category: "Chinese",
+  },
+
+  // 🍰 Desserts
+  {
+    name: "Chocolate Cake",
+    desc: "Rich chocolate layered cake",
+    price: 120,
+    category: "Desserts",
+  },
+  {
+    name: "Brownie",
+    desc: "Hot chocolate brownie",
+    price: 90,
+    category: "Desserts",
   },
 ];
 
@@ -41,10 +96,9 @@ export default function MenuList({ category, setCart, setOpen }: Props) {
       ? data
       : data.filter((item) => item.category === category);
 
-  // 🔥 Add to cart handler
   const handleAdd = (item: Item) => {
     setCart((prev) => [...prev, item]);
-    setOpen(true); // open modal
+    setOpen(true);
   };
 
   return (
@@ -82,7 +136,7 @@ export default function MenuList({ category, setCart, setOpen }: Props) {
             {/* Right */}
             <div className="flex items-center gap-4">
               <span className="font-bold text-yellow-400">
-                {item.price}
+                ₹{item.price}
               </span>
 
               <button

@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 
-import Footer from "./components/Footer";
-import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
-import Visit from "./components/Visit";
-import About from "./components/About";
-import CartModal from "./components/CartModal";
+import Hero from "./components/Hero";
 import MenuTabs from "./components/MenuTabs";
 import MenuList from "./components/MenuList";
+import Visit from "./components/Visit";
+import About from "./components/About";
+import Footer from "./components/Footer";
+import CartModal from "./components/CartModal";
 
 export default function Home() {
   const [category, setCategory] = useState("All Items");
@@ -21,7 +21,7 @@ export default function Home() {
       <Navbar />
       <Hero />
 
-      {/* 🔥 MENU SECTION */}
+      {/* MENU */}
       <MenuTabs setCategory={setCategory} />
       <MenuList
         category={category}
@@ -33,9 +33,13 @@ export default function Home() {
       <About />
       <Footer />
 
-      {/* 🔥 CART MODAL */}
+      {/* 🔥 FIX IS HERE */}
       {open && (
-        <CartModal cart={cart} setOpen={setOpen} />
+        <CartModal
+          cart={cart}
+          setCart={setCart}   // ✅ MUST PASS
+          setOpen={setOpen}
+        />
       )}
     </>
   );
