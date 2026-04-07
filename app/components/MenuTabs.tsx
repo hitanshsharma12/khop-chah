@@ -13,7 +13,7 @@ export default function MenuTabs({ setCategory }: any) {
   const [active, setActive] = useState("All Items");
 
   return (
-    <section className="relative py-16 overflow-hidden">
+    <section className="relative py-16 overflow-hidden ">
 
       {/* 🔥 Background Image */}
       <div className="absolute inset-0">

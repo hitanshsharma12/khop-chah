@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+type Item = {
+  name: string;
+  desc: string;
+  price: string;
+  category: string;
+};
 
-const data = [
+const data: Item[] = [
   {
     name: "Espresso",
     desc: "Single shot of premium espresso",
@@ -23,20 +28,33 @@ const data = [
   },
 ];
 
-export default function MenuList({ category }: any) {
+type Props = {
+  category: string;
+  setCart: React.Dispatch<React.SetStateAction<Item[]>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function MenuList({ category, setCart, setOpen }: Props) {
+  
   const filtered =
     category === "All Items"
       ? data
       : data.filter((item) => item.category === category);
 
+  // 🔥 Add to cart handler
+  const handleAdd = (item: Item) => {
+    setCart((prev) => [...prev, item]);
+    setOpen(true); // open modal
+  };
+
   return (
     <section className="relative py-20 px-6 overflow-hidden">
 
-      {/* 🔥 Background Image */}
+      {/* 🔥 Background */}
       <div className="absolute inset-0">
         <img
           src="/bg.jpg"
-          className="w-full h-full object-cover blur-sm scale-100"
+          className="w-full h-full object-cover blur-sm"
         />
         <div className="absolute inset-0 bg-black/70"></div>
       </div>
@@ -48,7 +66,8 @@ export default function MenuList({ category }: any) {
           <div
             key={i}
             className="flex justify-between items-center p-4 rounded-xl 
-                       bg-white/10 backdrop-blur-md border border-white/10"
+                       bg-white/10 backdrop-blur-md border border-white/10
+                       hover:scale-[1.02] transition"
           >
             {/* Left */}
             <div>
@@ -66,7 +85,10 @@ export default function MenuList({ category }: any) {
                 {item.price}
               </span>
 
-              <button className="bg-yellow-400 text-black px-4 py-2 rounded-full text-sm hover:scale-105 transition">
+              <button
+                onClick={() => handleAdd(item)}
+                className="bg-yellow-400 text-black px-4 py-2 rounded-full text-sm hover:scale-105 transition"
+              >
                 Add to Cart
               </button>
             </div>
