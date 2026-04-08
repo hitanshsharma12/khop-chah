@@ -1,5 +1,6 @@
 "use client";
 
+import { div } from "framer-motion/client";
 import { useState } from "react";
 
 const categories = [
@@ -13,14 +14,12 @@ export default function MenuTabs({ setCategory }: any) {
   const [active, setActive] = useState("All Items");
 
   return (
-    <section className="relative py-16 overflow-hidden ">
-
+    
+    <section className="relative py-2 overflow-hidden ">
+<h4 className="text-amber-200">menu</h4>
       {/* 🔥 Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src="/bg.jpg"
-          className="w-full h-full object-cover blur- scale-100"
-        />
+      <div className="absolute inset-0 bg-black">
+       
         <div className="absolute inset-0 bg-black/70"></div>
       </div>
 

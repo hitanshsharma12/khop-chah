@@ -1,4 +1,4 @@
-"use client";
+
 
 import { motion } from "framer-motion";
 
@@ -45,7 +45,7 @@ export default function Hero() {
             whileTap={{ scale: 0.95 }}
             className="mt-8 px-8 py-3 border-2 border-yellow-400 text-yellow-400 rounded-full font-semibold hover:bg-yellow-400 hover:text-black transition-all duration-300"
           >
-            View Menu
+            View Menu ↓
           </motion.button>
         </motion.div>
       </div>
