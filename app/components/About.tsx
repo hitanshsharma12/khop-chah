@@ -2,71 +2,64 @@
 
 import { motion } from "framer-motion";
 import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
+import Image from "next/image";
 
 export default function About() {
   return (
-    <section className="py-20 px-6 bg-[#0a0a0a] text-white overflow-hidden">
+    <section className="py-16 px-4 bg-[#0a0a0a] text-white">
 
-      <div className="grid md:grid-cols-2 gap-10 items-center">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
 
-        {/* Text */}
+        {/* TEXT */}
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
         >
-          <h2 className="text-yellow-400 text-3xl mb-4">Contact Us</h2>
+          <h2 className="text-yellow-400 text-2xl mb-2">Contact Us</h2>
 
-          <h3 className="text-4xl font-bold mb-4">
+          <h3 className="text-3xl font-bold mb-3">
             The Heart of Rohru
           </h3>
 
-          <p className="text-gray-400">
-            Bringing people together with great coffee and cozy vibes.
+          <p className="text-gray-400 text-sm">
+            Great coffee. Cozy vibes. Good people.
           </p>
 
-          <p className="mt-4">📞 +91 7018796714</p>
-          <p>📍 Rohru, Himachal Pradesh</p>
+          <div className="mt-4 text-sm">
+            <p>📞 +91 7018796714</p>
+            <p>📍 Rohru, Himachal Pradesh</p>
+          </div>
 
-          {/* 🔥 Social Icons */}
-          <div className="mt-6 flex gap-5 text-2xl">
-
-            <a
-              href="https://wa.me/917018796714"
-              target="_blank"
-              className="hover:text-green-500 transition"
-            >
-              <FaWhatsapp />
+          {/* SOCIAL */}
+          <div className="mt-5 flex gap-4 text-xl">
+            <a href="https://wa.me/917018796714" target="_blank">
+              <FaWhatsapp className="hover:text-green-500 transition" />
             </a>
-
-            <a
-              href="#"
-              target="_blank"
-              className="hover:text-pink-500 transition"
-            >
-              <FaInstagram />
+            <a href="#">
+              <FaInstagram className="hover:text-pink-500 transition" />
             </a>
-
-            <a
-              href="#"
-              target="_blank"
-              className="hover:text-blue-500 transition"
-            >
-              <FaFacebook />
+            <a href="#">
+              <FaFacebook className="hover:text-blue-500 transition" />
             </a>
-
           </div>
         </motion.div>
 
-        {/* Image */}
-        <motion.img
-          src="/cafe-gate.jpg"
-          className="rounded-xl"
-          initial={{ opacity: 0, x: 50 }}
+        {/* IMAGE */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
-        />
-
+          viewport={{ once: true }}
+        >
+          <Image
+            src="/cafe-gate.jpg"
+            alt="cafe"
+            width={600}
+            height={400}
+            className="rounded-xl"
+          />
+        </motion.div>
       </div>
-
     </section>
   );
 }

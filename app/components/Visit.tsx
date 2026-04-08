@@ -1,75 +1,78 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Visit() {
   return (
-    <section className="relative py-20 px-6 overflow-hidden">
+    <section className="relative py-16 px-4 overflow-hidden">
 
       {/* 🔥 Background */}
-      <div className="absolute inset-0">
-        <img
+      <div className="absolute inset-0 -z-10">
+        <Image
           src="/bg.jpg"
-          className="w-full h-full object-cover blur-sm scale-100"
+          alt="bg"
+          fill
+          quality={60}
+          className="object-cover scale-105"
         />
-        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
-      {/* 🔥 Content */}
-      <div className="relative z-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
 
-        {/* LEFT SIDE */}
+        {/* LEFT */}
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          className="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/10"
+          viewport={{ once: true }}
+          className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/10"
         >
-          <h2 className="text-3xl text-yellow-400 mb-4">Visit Us</h2>
+          <h2 className="text-2xl text-yellow-400 mb-3">Visit Us</h2>
 
-          <p className="text-gray-300 mb-4">
-            Come experience the warmth of खोप Cha! in the heart of the city.
+          <p className="text-gray-300 text-sm">
+            Come experience the warmth of खोप Cha!
           </p>
 
-          <p className="text-gray-400 mb-6">
-            A place where food lovers and friends come together.
-          </p>
-
-          {/* 📍 LOCATION CARD */}
-          <div className="bg-white/10 p-4 rounded-lg border border-white/10">
-            <p className="text-sm text-gray-300">📍 Rohru, Himachal Pradesh</p>
-            <p className="text-sm text-gray-300 mt-2">🕒 7 AM - 9 PM</p>
-            <p className="text-sm text-gray-300 mt-2">📞 +91 9876543210</p>
+          <div className="mt-4 bg-white/10 p-3 rounded-lg text-sm">
+            <p>📍 Rohru, Himachal Pradesh</p>
+            <p className="mt-1">🕒 7 AM - 9 PM</p>
+            <p className="mt-1">📞 +91 9876543210</p>
           </div>
 
-          {/* 🔥 GOOGLE MAP */}
-          <div className="mt-6 rounded-lg overflow-hidden">
+          {/* MAP */}
+          <div className="mt-4 rounded-lg overflow-hidden">
             <iframe
               src="https://www.google.com/maps?q=Rohru,Himachal%20Pradesh&output=embed"
-              className="w-full h-52 border-0"
+              className="w-full h-44 border-0"
               loading="lazy"
-            ></iframe>
+            />
           </div>
 
-          {/* 🔗 BUTTON */}
           <a
             href="https://www.google.com/maps?q=Rohru,Himachal%20Pradesh"
             target="_blank"
-            className="inline-block mt-4 text-yellow-400 underline"
+            className="inline-block mt-3 text-yellow-400 text-sm"
           >
-            Open in Google Maps →
+            Open Map →
           </a>
         </motion.div>
 
-        {/* RIGHT SIDE IMAGE */}
-        <motion.img
-          src="/cafe.jpg"
-          className="rounded-xl shadow-lg"
-          initial={{ opacity: 0, x: 50 }}
+        {/* RIGHT IMAGE */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
-        />
-
+          viewport={{ once: true }}
+        >
+          <Image
+            src="/cafe.jpg"
+            alt="cafe"
+            width={600}
+            height={400}
+            className="rounded-xl shadow-lg"
+          />
+        </motion.div>
       </div>
-
     </section>
   );
 }

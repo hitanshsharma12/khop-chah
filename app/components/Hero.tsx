@@ -1,49 +1,50 @@
-
+"use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Hero() {
   return (
     <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0">
-        <img
-          src="/bg.jpg"  // apni image ka path daal dena
+
+      {/* 🔥 Background */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/bg.jpg"
           alt="Background"
-          className="w-full h-full object-cover"
+          fill
+          priority
+          quality={70}
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/70"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
       </div>
 
-      {/* Animated Content */}
-      <div className="relative z-10 px-4 max-w-4xl mx-auto">
+      {/* 🔥 Content */}
+      <div className="px-4 max-w-4xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
-          {/* Top line: THE URBAN / જોગુ Cha (exactly as image) */}
-          <h1 className="text-4xl md:text-7xl font-bold">
+          <h1 className="text-4xl md:text-7xl font-bold leading-tight">
             <span className="text-yellow-400">THE URBAN</span>
             <span className="text-white"> | </span>
             <span className="text-amber-300">खोप Cha!</span>
           </h1>
 
-          {/* Subtitle: Breakfast, Lunch, Dinner, Fast Food */}
-          <p className="mt-4 text-gray-200 text-lg md:text-xl tracking-wide">
-            BREAKFAST, LUNCH, DINNER, FAST FOOD
+          <p className="mt-4 text-gray-200 text-base md:text-lg tracking-wide">
+            BREAKFAST • LUNCH • DINNER • FAST FOOD
           </p>
 
-          {/* The plastic line exactly as in image */}
-          <p className="mt-4 text-yellow-300/90 italic text-sm md:text-base">
+          <p className="mt-3 text-yellow-300 italic text-sm">
             “ रोहड़ू की मिट्टी, शहरी टच ”
           </p>
 
-          {/* CTA Button */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="mt-8 px-8 py-3 border-2 border-yellow-400 text-yellow-400 rounded-full font-semibold hover:bg-yellow-400 hover:text-black transition-all duration-300"
+            className="mt-6 px-6 py-2 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-black transition"
           >
             View Menu ↓
           </motion.button>
