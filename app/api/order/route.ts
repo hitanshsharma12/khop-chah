@@ -3,7 +3,7 @@ export async function POST(req: Request) {
 
   const { name, phone, cart, total, time, quantities } = body;
 
-  // 🔥 items with quantity
+  //  items with quantity
   const itemsText = cart
     .map(
       (item: any, i: number) =>

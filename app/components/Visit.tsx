@@ -27,11 +27,11 @@ export default function Visit() {
           <h2 className="text-3xl text-yellow-400 mb-4">Visit Us</h2>
 
           <p className="text-gray-300 mb-4">
-            Come experience the warmth of Rohru Café in the heart of the city.
+            Come experience the warmth of खोप Cha! in the heart of the city.
           </p>
 
           <p className="text-gray-400 mb-6">
-            A place where coffee lovers and friends come together.
+            A place where food lovers and friends come together.
           </p>
 
           {/* 📍 LOCATION CARD */}

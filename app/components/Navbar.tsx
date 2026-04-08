@@ -6,7 +6,7 @@ export default function Navbar() {
 
       {/* Logo */}
       <h1 className="text-2xl font-semibold text-yellow-400 tracking-wide">
-        Rohru Café
+        खोप Cha!
       </h1>
 
       {/* Links */}

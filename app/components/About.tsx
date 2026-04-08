@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 
 export default function About() {
   return (
@@ -26,14 +27,39 @@ export default function About() {
           <p className="mt-4">📞 +91 7018796714</p>
           <p>📍 Rohru, Himachal Pradesh</p>
 
-          <button className="mt-6 bg-green-500 px-6 py-3 rounded-lg">
-            Chat on WhatsApp
-          </button>
+          {/* 🔥 Social Icons */}
+          <div className="mt-6 flex gap-5 text-2xl">
+
+            <a
+              href="https://wa.me/917018796714"
+              target="_blank"
+              className="hover:text-green-500 transition"
+            >
+              <FaWhatsapp />
+            </a>
+
+            <a
+              href="#"
+              target="_blank"
+              className="hover:text-pink-500 transition"
+            >
+              <FaInstagram />
+            </a>
+
+            <a
+              href="#"
+              target="_blank"
+              className="hover:text-blue-500 transition"
+            >
+              <FaFacebook />
+            </a>
+
+          </div>
         </motion.div>
 
         {/* Image */}
         <motion.img
-          src="/owner.jpg"
+          src="/cafe-gate.jpg"
           className="rounded-xl"
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
