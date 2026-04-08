@@ -26,7 +26,7 @@ export default function Hero() {
           <h1 className="text-4xl md:text-7xl font-bold">
             <span className="text-yellow-400">THE URBAN</span>
             <span className="text-white"> | </span>
-            <span className="text-amber-300">खोप Cha</span>
+            <span className="text-amber-300">खोप Cha!</span>
           </h1>
 
           {/* Subtitle: Breakfast, Lunch, Dinner, Fast Food */}
