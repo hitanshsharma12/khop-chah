@@ -177,7 +177,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
             onClick={() => setOpen(false)}
             className="flex-1 border py-3 rounded-lg"
           >
-            Back
+            Add More
           </button>
         </div>
 
