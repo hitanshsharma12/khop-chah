@@ -16,7 +16,7 @@ export default function About() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-yellow-400 text-2xl mb-2">Contact Us</h2>
+          <h2 className="text-yellow-400 text-2xl mb-2">Follow Us</h2>
 
           <h3 className="text-3xl font-bold mb-3">
             The Heart of Rohru
@@ -27,7 +27,7 @@ export default function About() {
           </p>
 
           <div className="mt-4 text-sm">
-            <p>📞 +91 7018796714</p>
+           
             <p>📍 Rohru, Himachal Pradesh</p>
           </div>
 

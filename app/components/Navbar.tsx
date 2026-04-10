@@ -34,7 +34,7 @@ export default function Navbar() {
           }}
           whileHover={{ scale: 1.05 }}
           className="border border-yellow-400 text-yellow-400 px-5 py-2 rounded-lg 
-                     hover:bg-yellow-400 hover:text-black transition shadow-md bg-black/40"
+                     shadow-md bg-black/40"
         >
           Order Now
         </motion.button>

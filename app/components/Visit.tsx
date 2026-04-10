@@ -37,7 +37,7 @@ export default function Visit() {
             <p>📍 The Urban Khopcha HP 10</p>
             <p className="mt-1">5PXX+M74, Rohru, Himachal Pradesh 171207</p>
             <p className="mt-1">🕒 7 AM - 9 PM</p>
-            <p className="mt-1">📞 +91 9876543210</p>
+            <p className="mt-1">📞 +91 7986383165</p>
           </div>
 
           {/* 🔥 EXACT MAP EMBED */}
