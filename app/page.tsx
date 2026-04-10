@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -21,23 +22,39 @@ export default function Home() {
       <Navbar />
       <Hero />
 
-      {/* MENU */}
-      <MenuTabs setCategory={setCategory} />
-      <MenuList
-        category={category}
-        setCart={setCart}
-        setOpen={setOpen}
-      />
+      {/* 🔥 MENU SECTION (SAME BACKGROUND) */}
+      <section className="relative">
+
+        {/* ✅ Background Image */}
+        <Image
+          src="/bg.jpg"
+          alt="menu background"
+          fill
+          className="object-cover -z-10"
+        />
+
+        {/* ✅ Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80 -z-10"></div>
+
+        {/* ✅ Menu Content */}
+        <MenuTabs setCategory={setCategory} />
+        <MenuList
+          category={category}
+          setCart={setCart}
+          setOpen={setOpen}
+        />
+
+      </section>
 
       <Visit />
       <About />
       <Footer />
 
-      {/* 🔥 FIX IS HERE */}
+      {/* 🔥 CART MODAL */}
       {open && (
         <CartModal
           cart={cart}
-          setCart={setCart}   // ✅ MUST PASS
+          setCart={setCart}
           setOpen={setOpen}
         />
       )}

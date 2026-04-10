@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     .join("\n");
 
   const message = `
- *New Order - Rohru Café*
+ *New Order - Café Khopcha!*
 
  Name: ${name}
  Phone: ${phone}

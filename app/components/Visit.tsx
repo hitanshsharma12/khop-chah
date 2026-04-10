@@ -13,7 +13,6 @@ export default function Visit() {
           src="/bg.jpg"
           alt="bg"
           fill
-          quality={60}
           className="object-cover scale-105"
         />
         <div className="absolute inset-0 bg-black/70" />
@@ -31,30 +30,32 @@ export default function Visit() {
           <h2 className="text-2xl text-yellow-400 mb-3">Visit Us</h2>
 
           <p className="text-gray-300 text-sm">
-            Come experience the warmth of खोप Cha!
+            Come experience the vibe of Khopcha!
           </p>
 
-          <div className="mt-4 bg-white/10 p-3 rounded-lg text-sm">
-            <p>📍 Rohru, Himachal Pradesh</p>
+          <div className="mt-4 bg-white/10 p-3 rounded-lg text-sm text-white">
+            <p>📍 The Urban Khopcha HP 10</p>
+            <p className="mt-1">5PXX+M74, Rohru, Himachal Pradesh 171207</p>
             <p className="mt-1">🕒 7 AM - 9 PM</p>
             <p className="mt-1">📞 +91 9876543210</p>
           </div>
 
-          {/* MAP */}
+          {/* 🔥 EXACT MAP EMBED */}
           <div className="mt-4 rounded-lg overflow-hidden">
             <iframe
-              src="https://www.google.com/maps?q=Rohru,Himachal%20Pradesh&output=embed"
+              src="https://www.google.com/maps?q=5PXX+M74,Rohru,Himachal%20Pradesh&output=embed"
               className="w-full h-44 border-0"
               loading="lazy"
             />
           </div>
 
+          {/* 🔥 DIRECT NAVIGATION BUTTON */}
           <a
-            href="https://www.google.com/maps?q=Rohru,Himachal%20Pradesh"
+            href="https://www.google.com/maps/search/?api=1&query=5PXX+M74,Rohru,Himachal%20Pradesh"
             target="_blank"
-            className="inline-block mt-3 text-yellow-400 text-sm"
+            className="inline-block mt-4 bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 transition"
           >
-            Open Map →
+            Get Directions →
           </a>
         </motion.div>
 
@@ -72,6 +73,7 @@ export default function Visit() {
             className="rounded-xl shadow-lg"
           />
         </motion.div>
+
       </div>
     </section>
   );

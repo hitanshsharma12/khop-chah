@@ -34,7 +34,7 @@ export default function Hero() {
           </h1>
 
           <p className="mt-4 text-gray-200 text-base md:text-lg tracking-wide">
-            BREAKFAST • LUNCH • DINNER • FAST FOOD
+            • FAST FOOD • DAILY NEEDS • HOME DELIVERY
           </p>
 
           <p className="mt-3 text-yellow-300 italic text-sm">
