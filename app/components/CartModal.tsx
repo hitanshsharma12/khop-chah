@@ -9,7 +9,32 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   const [time, setTime] = useState("");
 
   const [quantities, setQuantities] = useState(cart.map(() => 1));
-  const [selectedSize, setSelectedSize] = useState(cart.map(() => 0)); // index of price
+  const [selectedSize, setSelectedSize] = useState(cart.map(() => 0));
+
+  const [location, setLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  // 🔥 LOCATION FUNCTION
+  const handleLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Location not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      () => {
+        alert("Permission denied ❌");
+      }
+    );
+  };
 
   // 🔥 convert price string → array
   const getPrices = (price: string) => {
@@ -28,13 +53,14 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     setSelectedSize((prev: any) => prev.filter((_: any, index: number) => index !== i));
   };
 
-  // 🔥 TOTAL FIX
+  // 🔥 TOTAL
   const total = cart.reduce((acc: number, item: any, i: number) => {
     const prices = getPrices(item.price);
     const price = prices[selectedSize[i]] || prices[0];
     return acc + price * quantities[i];
   }, 0);
 
+  // 🔥 ORDER FUNCTION
   const handleOrder = async () => {
     if (!name || !phone) {
       alert("Enter name & phone");
@@ -51,6 +77,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         quantities,
         selectedSize,
         total,
+        location,
       }),
     });
 
@@ -66,6 +93,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
       <div className="bg-[#f8f5f2] w-full max-w-2xl rounded-xl p-4 md:p-6 overflow-y-auto max-h-[90vh] relative">
 
+        {/* Close */}
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-4 text-red-500 text-xl"
@@ -85,7 +113,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
               <h3 className="font-semibold">{item.name}</h3>
 
-              {/* 🔥 SIZE SELECT */}
+              {/* SIZE */}
               {prices.length > 1 && (
                 <div className="flex gap-2 my-2">
                   {prices.map((p: number, idx: number) => (
@@ -139,6 +167,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           Total: ₹{total}
         </div>
 
+        {/* 🔥 SHARE LOCATION BUTTON (PRO) */}
+      
+
         {/* FORM */}
         <input
           type="text"
@@ -163,15 +194,29 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"
         />
+          <button
+          onClick={handleLocation}
+          disabled={!!location}
+          className="w-full flex items-center justify-center gap-2 
+                     bg-green-600 hover:bg-green-700 
+                     text-white py-3 rounded-lg font-semibold 
+                     shadow-md transition-all duration-300 
+                     active:scale-95 mb-4
+                     disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {location ? "✅ Location Added" : "📍 Share Live Location"}
+        </button>
 
         {/* BUTTONS */}
         <div className="flex gap-2">
           <button
             onClick={handleOrder}
-            className="flex-1 bg-[#8B5E3C] text-white py-3 rounded-lg"
+            className="flex-1 bg-[#8B5E3C] text-white py-3 rounded-lg font-semibold hover:opacity-90"
           >
             Order ₹{total}
           </button>
+
+
 
           <button
             onClick={() => setOpen(false)}

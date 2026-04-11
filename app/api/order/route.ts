@@ -1,9 +1,9 @@
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { name, phone, cart, total, time, quantities } = body;
+  const { name, phone, cart, total, time, quantities, location } = body;
 
-  //  items with quantity
+  // 🔥 items with quantity
   const itemsText = cart
     .map(
       (item: any, i: number) =>
@@ -11,21 +11,29 @@ export async function POST(req: Request) {
     )
     .join("\n");
 
+  // 🔥 GOOGLE MAP LINK
+  const locationLink = location
+    ? `https://www.google.com/maps?q=${location.lat},${location.lng}`
+    : "Not Shared";
+
   const message = `
- *New Order - Café Khopcha!*
+*New Order - Café Khopcha!*
 
- Name: ${name}
- Phone: ${phone}
+Name: ${name}
+Phone: ${phone}
 
- Items:
+Items:
 ${itemsText}
 
- Time: ${time}
+Time: ${time || "Not given"}
 
- Total: ₹${total}
+📍 Location:
+${locationLink}
+
+Total: ₹${total}
 `;
 
-  const whatsappNumber = "917018796714"; 
+  const whatsappNumber = "917018796714";
 
   const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
