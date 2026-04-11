@@ -33,7 +33,7 @@ ${locationLink}
 Total: ₹${total}
 `;
 
-  const whatsappNumber = "917018796714";
+  const whatsappNumber = "919805073874";
 
   const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
