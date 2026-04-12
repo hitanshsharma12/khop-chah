@@ -7,6 +7,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [time, setTime] = useState("");
+  const [address, setAddress] = useState(""); // 🔥 location description
 
   const [quantities, setQuantities] = useState(cart.map(() => 1));
   const [selectedSize, setSelectedSize] = useState(cart.map(() => 0));
@@ -16,7 +17,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     lng: number;
   } | null>(null);
 
-  // 🔥 LOCATION FUNCTION
+  // 🔥 LOCATION
   const handleLocation = () => {
     if (!navigator.geolocation) {
       alert("Location not supported");
@@ -36,7 +37,17 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     );
   };
 
-  // 🔥 convert price string → array
+  // 🔥 ONLY NUMBER INPUT
+  const handlePhoneChange = (value: string) => {
+    const cleaned = value.replace(/\D/g, ""); // remove non-numbers
+    if (cleaned.length <= 10) {
+      setPhone(cleaned);
+    }
+  };
+
+  const isValidPhone = (num: string) => /^[0-9]{10}$/.test(num);
+
+  // 🔥 PRICE
   const getPrices = (price: string) => {
     return price.match(/\d+/g)?.map(Number) || [0];
   };
@@ -53,17 +64,21 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     setSelectedSize((prev: any) => prev.filter((_: any, index: number) => index !== i));
   };
 
-  // 🔥 TOTAL
   const total = cart.reduce((acc: number, item: any, i: number) => {
     const prices = getPrices(item.price);
     const price = prices[selectedSize[i]] || prices[0];
     return acc + price * quantities[i];
   }, 0);
 
-  // 🔥 ORDER FUNCTION
+  // 🔥 ORDER
   const handleOrder = async () => {
     if (!name || !phone) {
       alert("Enter name & phone");
+      return;
+    }
+
+    if (!isValidPhone(phone)) {
+      alert("Enter valid 10 digit number ❌");
       return;
     }
 
@@ -78,6 +93,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         selectedSize,
         total,
         location,
+        address,
       }),
     });
 
@@ -113,7 +129,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
               <h3 className="font-semibold">{item.name}</h3>
 
-              {/* SIZE */}
               {prices.length > 1 && (
                 <div className="flex gap-2 my-2">
                   {prices.map((p: number, idx: number) => (
@@ -136,14 +151,11 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                 </div>
               )}
 
-              {/* PRICE */}
               <p className="text-red-500 font-semibold">
                 ₹{prices[selectedSize[i]] || prices[0]}
               </p>
 
-              {/* CONTROLS */}
               <div className="flex justify-between items-center mt-2">
-
                 <div className="flex items-center gap-2">
                   <button onClick={() => updateQty(i, -1)} className="px-2 bg-gray-200 rounded">-</button>
                   <span>{quantities[i]}</span>
@@ -157,7 +169,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                   Remove
                 </button>
               </div>
-
             </div>
           );
         })}
@@ -167,9 +178,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           Total: ₹{total}
         </div>
 
-        {/* 🔥 SHARE LOCATION BUTTON (PRO) */}
-      
-
+        
         {/* FORM */}
         <input
           type="text"
@@ -180,10 +189,11 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         />
 
         <input
-          type="text"
-          placeholder="Phone"
+          type="tel"
+          inputMode="numeric"
+          placeholder="Phone (10 digit)"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => handlePhoneChange(e.target.value)}
           className="border p-2 rounded-lg w-full mb-2"
         />
 
@@ -194,15 +204,22 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"
         />
-          <button
+
+        {/* 🔥 LOCATION DESCRIPTION */}
+        <input
+          type="text"
+          placeholder="Location Description/ Landmark"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="border p-2 rounded-lg w-full mb-2"
+        />
+
+
+        {/* LOCATION BUTTON */}
+        <button
           onClick={handleLocation}
           disabled={!!location}
-          className="w-full flex items-center justify-center gap-2 
-                     bg-green-600 hover:bg-green-700 
-                     text-white py-3 rounded-lg font-semibold 
-                     shadow-md transition-all duration-300 
-                     active:scale-95 mb-4
-                     disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-green-600 text-white py-3 rounded-lg mb-4"
         >
           {location ? "✅ Location Added" : "📍 Share Live Location"}
         </button>
@@ -211,12 +228,10 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         <div className="flex gap-2">
           <button
             onClick={handleOrder}
-            className="flex-1 bg-[#8B5E3C] text-white py-3 rounded-lg font-semibold hover:opacity-90"
+            className="flex-1 bg-[#8B5E3C] text-white py-3 rounded-lg"
           >
             Order ₹{total}
           </button>
-
-
 
           <button
             onClick={() => setOpen(false)}

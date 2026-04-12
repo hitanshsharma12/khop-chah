@@ -1,9 +1,8 @@
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { name, phone, cart, total, time, quantities, location } = body;
+  const { name, phone, cart, total, time, quantities, location, address } = body;
 
-  // 🔥 items with quantity
   const itemsText = cart
     .map(
       (item: any, i: number) =>
@@ -11,7 +10,6 @@ export async function POST(req: Request) {
     )
     .join("\n");
 
-  // 🔥 GOOGLE MAP LINK
   const locationLink = location
     ? `https://www.google.com/maps?q=${location.lat},${location.lng}`
     : "Not Shared";
@@ -27,7 +25,10 @@ ${itemsText}
 
 Time: ${time || "Not given"}
 
-📍 Location:
+📍 Address:
+${address || "Not provided"}
+
+📍 Live Location:
 ${locationLink}
 
 Total: ₹${total}
