@@ -7,7 +7,8 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [time, setTime] = useState("");
-  const [address, setAddress] = useState(""); // 🔥 location description
+  const [address, setAddress] = useState("");
+  const [parking, setParking] = useState(false); // 🚗 NEW
 
   const [quantities, setQuantities] = useState(cart.map(() => 1));
   const [selectedSize, setSelectedSize] = useState(cart.map(() => 0));
@@ -17,7 +18,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     lng: number;
   } | null>(null);
 
-  // 🔥 LOCATION
+  // 📍 LOCATION
   const handleLocation = () => {
     if (!navigator.geolocation) {
       alert("Location not supported");
@@ -37,9 +38,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     );
   };
 
-  // 🔥 ONLY NUMBER INPUT
+  // 📞 PHONE VALIDATION
   const handlePhoneChange = (value: string) => {
-    const cleaned = value.replace(/\D/g, ""); // remove non-numbers
+    const cleaned = value.replace(/\D/g, "");
     if (cleaned.length <= 10) {
       setPhone(cleaned);
     }
@@ -47,7 +48,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
   const isValidPhone = (num: string) => /^[0-9]{10}$/.test(num);
 
-  // 🔥 PRICE
+  // 💰 PRICE
   const getPrices = (price: string) => {
     return price.match(/\d+/g)?.map(Number) || [0];
   };
@@ -70,15 +71,22 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     return acc + price * quantities[i];
   }, 0);
 
-  // 🔥 ORDER
+  // 🧾 ORDER
   const handleOrder = async () => {
-    if (!name || !phone) {
-      alert("Enter name & phone");
+
+    // ✅ VALIDATION UPDATED
+    if (!name || !phone || !time || !address) {
+      alert("⚠️ Fill all details (Name, Phone, Time, Landmark)");
       return;
     }
 
     if (!isValidPhone(phone)) {
       alert("Enter valid 10 digit number ❌");
+      return;
+    }
+
+    if (Number(time) <= 0) {
+      alert("Enter valid pickup time ⏰");
       return;
     }
 
@@ -94,6 +102,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         total,
         location,
         address,
+        parking, // 🚗 SEND THIS
       }),
     });
 
@@ -109,7 +118,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
       <div className="bg-[#f8f5f2] w-full max-w-2xl rounded-xl p-4 md:p-6 overflow-y-auto max-h-[90vh] relative">
 
-        {/* Close */}
+        {/* ❌ CLOSE */}
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-4 text-red-500 text-xl"
@@ -119,7 +128,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
         <h2 className="text-xl font-semibold mb-4">Your Order</h2>
 
-        {/* ITEMS */}
+        {/* 🛒 ITEMS */}
         {cart.map((item: any, i: number) => {
           const prices = getPrices(item.price);
           const sizes = ["S", "M", "L"];
@@ -173,13 +182,12 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           );
         })}
 
-        {/* TOTAL */}
+        {/* 💰 TOTAL */}
         <div className="text-right font-semibold text-lg mb-4">
           Total: ₹{total}
         </div>
 
-        
-        {/* FORM */}
+        {/* 📝 FORM */}
         <input
           type="text"
           placeholder="Full Name"
@@ -197,34 +205,46 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           className="border p-2 rounded-lg w-full mb-2"
         />
 
+        {/* ⏰ PICKUP TIME */}
         <input
-          type="text"
-          placeholder="Pickup Time"
+          type="number"
+          placeholder="Pickup Time (in minutes)"
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"
         />
 
-        {/* 🔥 LOCATION DESCRIPTION */}
+        {/* 📍 LANDMARK (COMPULSORY) */}
         <input
           type="text"
-          placeholder="Location Description/ Landmark"
+          placeholder="Landmark / Address (Required)"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="border p-2 rounded-lg w-full mb-2"
         />
 
-
-        {/* LOCATION BUTTON */}
+        {/* 📍 LOCATION */}
         <button
           onClick={handleLocation}
           disabled={!!location}
-          className="w-full bg-green-600 text-white py-3 rounded-lg mb-4"
+          className="w-full bg-green-600 text-white py-3 rounded-lg mb-3"
         >
           {location ? "✅ Location Added" : "📍 Share Live Location"}
         </button>
 
-        {/* BUTTONS */}
+        {/* 🚗 PARKING */}
+        <button
+          onClick={() => setParking(!parking)}
+          className={`w-full py-3 rounded-lg mb-4 border ${
+            parking
+              ? "bg-yellow-400 text-black"
+              : "bg-white text-black"
+          }`}
+        >
+          🚗 {parking ? "Parking Needed" : "Need Parking?"}
+        </button>
+
+        {/* 🔘 BUTTONS */}
         <div className="flex gap-2">
           <button
             onClick={handleOrder}
