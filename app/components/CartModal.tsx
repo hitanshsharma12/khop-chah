@@ -2,13 +2,19 @@
 
 import { useState } from "react";
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 export default function CartModal({ cart, setCart, setOpen }: any) {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [time, setTime] = useState("");
   const [address, setAddress] = useState("");
-  const [parking, setParking] = useState(false); // 🚗 NEW
+  const [parking, setParking] = useState(false);
 
   const [quantities, setQuantities] = useState(cart.map(() => 1));
   const [selectedSize, setSelectedSize] = useState(cart.map(() => 0));
@@ -71,10 +77,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     return acc + price * quantities[i];
   }, 0);
 
-  // 🧾 ORDER
+  // 🧾 COD ORDER
   const handleOrder = async () => {
 
-    // ✅ VALIDATION UPDATED
     if (!name || !phone || !time || !address) {
       alert("⚠️ Fill all details (Name, Phone, Time, Landmark)");
       return;
@@ -102,7 +107,8 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         total,
         location,
         address,
-        parking, // 🚗 SEND THIS
+        parking,
+        payment: "COD",
       }),
     });
 
@@ -113,12 +119,82 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     setOpen(false);
   };
 
+  // 💳 ONLINE PAYMENT
+  const handleOnlinePayment = async () => {
+
+    if (!name || !phone || !time || !address) {
+      alert("⚠️ Fill all details (Name, Phone, Time, Address)");
+      return;
+    }
+
+    if (!isValidPhone(phone)) {
+      alert("Enter valid phone number");
+      return;
+    }
+
+    if (Number(time) <= 0) {
+      alert("Enter valid pickup time ⏰");
+      return;
+    }
+
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      body: JSON.stringify({
+        amount: total,
+        name,
+        phone,
+        cart,
+        address,
+      }),
+    });
+
+    const data = await res.json();
+
+    const options = {
+      key: "YOUR_RAZORPAY_KEY", // 🔥 replace
+      amount: data.amount,
+      currency: "INR",
+      name: "Cafe Khopcha",
+      description: "Order Payment",
+      order_id: data.id,
+
+      handler: async function () {
+        alert("Payment Successful ✅");
+
+        const orderRes = await fetch("/api/order", {
+          method: "POST",
+          body: JSON.stringify({
+            name,
+            phone,
+            time,
+            cart,
+            quantities,
+            selectedSize,
+            total,
+            location,
+            address,
+            parking,
+            payment: "Online",
+          }),
+        });
+
+        const orderData = await orderRes.json();
+        window.open(orderData.url, "_blank");
+
+        setCart([]);
+        setOpen(false);
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50 p-3">
 
       <div className="bg-[#f8f5f2] w-full max-w-2xl rounded-xl p-4 md:p-6 overflow-y-auto max-h-[90vh] relative">
 
-        {/* ❌ CLOSE */}
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-4 text-red-500 text-xl"
@@ -128,7 +204,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
         <h2 className="text-xl font-semibold mb-4">Your Order</h2>
 
-        {/* 🛒 ITEMS */}
         {cart.map((item: any, i: number) => {
           const prices = getPrices(item.price);
           const sizes = ["S", "M", "L"];
@@ -182,12 +257,10 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           );
         })}
 
-        {/* 💰 TOTAL */}
         <div className="text-right font-semibold text-lg mb-4">
           Total: ₹{total}
         </div>
 
-        {/* 📝 FORM */}
         <input
           type="text"
           placeholder="Full Name"
@@ -205,25 +278,22 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           className="border p-2 rounded-lg w-full mb-2"
         />
 
-        {/* ⏰ PICKUP TIME */}
         <input
           type="number"
-          placeholder="Pickup Time (in minutes)"
+          placeholder="Pickup Time (minutes)"
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"
         />
 
-        {/* 📍 LANDMARK (COMPULSORY) */}
         <input
           type="text"
-          placeholder="Landmark / Address (Required)"
+          placeholder="Landmark / Address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="border p-2 rounded-lg w-full mb-2"
         />
 
-        {/* 📍 LOCATION */}
         <button
           onClick={handleLocation}
           disabled={!!location}
@@ -232,19 +302,15 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           {location ? "✅ Location Added" : "📍 Share Live Location"}
         </button>
 
-        {/* 🚗 PARKING */}
         <button
           onClick={() => setParking(!parking)}
           className={`w-full py-3 rounded-lg mb-4 border ${
-            parking
-              ? "bg-yellow-400 text-black"
-              : "bg-white text-black"
+            parking ? "bg-yellow-400 text-black" : "bg-white text-black"
           }`}
         >
           🚗 {parking ? "Parking Needed" : "Need Parking?"}
         </button>
 
-        {/* 🔘 BUTTONS */}
         <div className="flex gap-2">
           <button
             onClick={handleOrder}
@@ -260,6 +326,14 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
             Add More
           </button>
         </div>
+
+        {/* 🔥 SEXY ONLINE PAYMENT BUTTON */}
+        <button
+          onClick={handleOnlinePayment}
+       className="w-full mt-3 bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:scale-[1.02] transition"
+        >
+          Place Home Delivery (Pay Online)
+        </button>
 
       </div>
     </div>
