@@ -2,36 +2,43 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState } from "react";
 import { FaMotorcycle, FaParking } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const [open, setOpen] = useState(false);
+  const [people, setPeople] = useState(2);
+  const [parking, setParking] = useState(false);
+  const [arrivingIn, setArrivingIn] = useState("");
+  const [vehicle, setVehicle] = useState(""); // ✅ NEW
+
+  const router = useRouter();
+
+  const handleStart = () => {
+    localStorage.setItem(
+      "booking",
+      JSON.stringify({ people, parking, arrivingIn, vehicle }) // ✅ UPDATED
+    );
+    router.push("/menu");
+  };
+
   return (
     <section className="relative h-screen flex items-center justify-center text-center overflow-hidden px-4">
 
-      {/* 🔥 Background */}
+      {/* Background */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="/bg.jpg"
-          alt="Background"
-          fill
-          priority
-          quality={70}
-          className="object-cover"
-        />
+        <Image src="/bg.jpg" alt="Background" fill priority className="object-cover" />
         <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
       </div>
 
-      {/* 🔥 TOP MINI FEATURE BAR (COMPACT) */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="absolute top-20 flex gap-3 text-xs md:text-sm 
-                   bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
-      >
+      {/* TOP BAR */}
+      <div className="absolute top-20 flex gap-3 text-xs md:text-sm 
+        bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+
         <div className="flex items-center gap-1 text-white">
           <FaMotorcycle className="text-yellow-400 text-xs" />
-         Home Delivery
+          Home Delivery
         </div>
 
         <div className="w-[1px] bg-white/20"></div>
@@ -40,49 +47,105 @@ export default function Hero() {
           <FaParking className="text-yellow-400 text-xs" />
           Free Parking  
         </div>
-      </motion.div>
+      </div>
 
-      {/* 🔥 MAIN CONTENT */}
+      {/* MAIN */}
       <div className="max-w-3xl">
 
-      
-
-        {/* 🔥 HEADING */}
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-4xl md:text-7xl font-bold leading-tight"
-        >
+        <h1 className="text-4xl md:text-7xl font-bold">
           <span className="text-yellow-400">THE URBAN</span>
           <span className="text-white"> | </span>
           <span className="text-amber-300">खोप Cha!</span>
-        </motion.h1>
+        </h1>
 
-        {/* SUBTEXT */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-4 text-gray-200 text-sm md:text-lg tracking-wide"
-        >
+        <p className="mt-4 text-gray-200 text-sm md:text-lg">
           • FAST FOOD • DAILY NEEDS • HOME DELIVERY
-        </motion.p>
-
-        <p className="mt-2 text-yellow-300 italic text-xs md:text-sm">
-          “ रोहड़ू की मिट्टी, शहरी टच ”
         </p>
 
-        {/* BUTTON */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="mt-6 px-6 py-2 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-black transition"
-        >
-          View Menu ↓
-        </motion.button>
+        <div className="flex gap-3 justify-center mt-6 flex-wrap">
+          <button
+            onClick={() => setOpen(true)}
+            className="px-6 py-2 bg-yellow-400 text-black rounded-full font-semibold hover:scale-105 transition"
+          >
+            Book a Table
+          </button>
+
+          <button
+            onClick={() => router.push("/menu")}
+            className="px-6 py-2 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-black transition"
+          >
+            View Menu ↓
+          </button>
+        </div>
       </div>
 
+      {/* MODAL */}
+      {open && (
+        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+
+          <div className="bg-white p-6 rounded-xl w-[90%] max-w-sm text-black relative">
+
+            <button 
+              onClick={() => setOpen(false)} 
+              className="absolute top-3 right-4 text-gray-500 hover:text-black font-bold"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-lg font-semibold mb-4 mt-2">
+              Book Your Table
+            </h2>
+
+            <label className="text-sm">Number of People</label>
+            <input
+              type="number"
+              value={people}
+              onChange={(e) => setPeople(Number(e.target.value))}
+              className="w-full border p-2 rounded mb-3"
+            />
+
+            <label className="text-sm">Arriving in (minutes)</label>
+            <input
+              type="number"
+              value={arrivingIn}
+              placeholder="e.g 30 min"
+              onChange={(e) => setArrivingIn(e.target.value)}
+              className="w-full border p-2 rounded mb-3"
+            />
+
+            {/* ✅ VEHICLE NUMBER */}
+            <label className="text-sm">Vehicle Number</label>
+            <input
+              type="text"
+              placeholder="HP 10 AB 1234"
+              value={vehicle}
+              onChange={(e) => setVehicle(e.target.value)}
+              className="w-full border p-2 rounded mb-3"
+            />
+
+            <button
+              onClick={() => setParking(!parking)}
+              className={`w-full py-2 rounded mb-4 ${
+                parking ? "bg-yellow-400" : "bg-gray-200"
+              }`}
+            >
+              🚗 {parking ? "Parking Needed" : "Need Parking?"}
+            </button>
+
+            <p className="text-xs text-gray-600 mb-4">
+              💡 Select menu items in advance & your food will be ready when you arrive 🚀
+            </p>
+
+            <button
+              onClick={handleStart}
+              className="w-full bg-black text-white py-2 rounded"
+            >
+              Book Now!
+            </button>
+
+          </div>
+        </div>
+      )}
     </section>
   );
 }

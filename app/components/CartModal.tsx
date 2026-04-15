@@ -288,28 +288,12 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
         <input
           type="text"
-          placeholder="Landmark / Address"
+          placeholder="Location Discprition"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="border p-2 rounded-lg w-full mb-2"
         />
-
-        <button
-          onClick={handleLocation}
-          disabled={!!location}
-          className="w-full bg-green-600 text-white py-3 rounded-lg mb-3"
-        >
-          {location ? "✅ Location Added" : "📍 Share Live Location"}
-        </button>
-
-        <button
-          onClick={() => setParking(!parking)}
-          className={`w-full py-3 rounded-lg mb-4 border ${
-            parking ? "bg-yellow-400 text-black" : "bg-white text-black"
-          }`}
-        >
-          🚗 {parking ? "Parking Needed" : "Need Parking?"}
-        </button>
+  
 
         <div className="flex gap-2">
           <button

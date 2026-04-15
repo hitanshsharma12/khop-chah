@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     total,
     time,
     quantities,
-    location,
     address,
     parking,
   } = body;
@@ -33,22 +32,22 @@ export async function POST(req: Request) {
     timeStyle: "short",
   });
 
-  // 🛒 ITEMS
+  // 🛒 ITEMS (SAFE VERSION)
   const itemsText = cart
     .map((item: any, i: number) => {
-      const price = item.price.replace(/₹/g, ""); // remove extra ₹
+      const price =
+        typeof item.price === "string"
+          ? item.price.replace(/₹/g, "")
+          : item.price;
+
       return `• ${item.name}  x${quantities?.[i] || 1}  - ₹${price}`;
     })
     .join("\n");
 
-  // 📍 LOCATION
-  const locationLink = location
-    ? `https://www.google.com/maps?q=${location.lat},${location.lng}`
-    : "Not Shared";
-
+  // 🚗 PARKING
   const parkingText = parking ? "Yes" : "No";
 
-  // 🧾 CLEAN MESSAGE
+  // 🧾 FINAL MESSAGE
   const message = `
 ● Order #${orderNumber}
 
@@ -66,9 +65,6 @@ ${itemsText}
 
 ● Address:
 ${address}
-
-• Live Location:
-${locationLink}
 
 • Parking: ${parkingText}
 
