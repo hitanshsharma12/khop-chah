@@ -1,26 +1,37 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import { FaMotorcycle, FaParking } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { MapPin } from "lucide-react";
 
 export default function Hero() {
   const [open, setOpen] = useState(false);
   const [people, setPeople] = useState(2);
   const [parking, setParking] = useState(false);
   const [arrivingIn, setArrivingIn] = useState("");
-  const [vehicle, setVehicle] = useState(""); // ✅ NEW
+  const [vehicle, setVehicle] = useState("");
 
   const router = useRouter();
 
   const handleStart = () => {
     localStorage.setItem(
       "booking",
-      JSON.stringify({ people, parking, arrivingIn, vehicle }) // ✅ UPDATED
+      JSON.stringify({ people, parking, arrivingIn, vehicle })
     );
     router.push("/menu");
+  };
+
+  // Smooth scroll to Visit Us section
+  const scrollToVisit = () => {
+    const visitSection = document.getElementById("visit");
+    if (visitSection) {
+      visitSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   return (
@@ -49,8 +60,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* MAIN */}
-      <div className="max-w-3xl">
+      {/* MAIN CONTENT */}
+      <div className="max-w-3xl z-10">
 
         <h1 className="text-4xl md:text-7xl font-bold">
           <span className="text-yellow-400">THE URBAN</span>
@@ -62,22 +73,36 @@ export default function Hero() {
           • FAST FOOD • DAILY NEEDS • HOME DELIVERY
         </p>
 
-        <div className="flex gap-3 justify-center mt-6 flex-wrap">
+        {/* Buttons */}
+        <div className="flex flex-wrap gap-3 justify-center mt-8 mb-4">
           <button
             onClick={() => setOpen(true)}
-            className="px-6 py-2 bg-yellow-400 text-black rounded-full font-semibold hover:scale-105 transition"
+            className="group flex items-center gap-2 px-6 py-2 bg-yellow-400 text-black rounded-full font-semibold hover:scale-105 transition"
           >
             Book a Table
           </button>
 
           <button
-            onClick={() => router.push("/menu")}
             className="px-6 py-2 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-black transition"
           >
             View Menu ↓
           </button>
         </div>
       </div>
+
+      {/* Location Icon - Bottom Left (Fixed Position) */}
+      <button
+        onClick={scrollToVisit}
+        className="absolute bottom-8 left-6 md:left-10 z-20 
+                   flex items-center justify-center w-14 h-14 
+                   bg-white/10 hover:bg-white/20 backdrop-blur-md 
+                   border border-white/30 rounded-full 
+                   text-white hover:text-yellow-400 
+                   transition-all duration-300 hover:scale-110"
+        aria-label="Visit Us Location"
+      >
+        <MapPin size={28} strokeWidth={2.5} />
+      </button>
 
       {/* MODAL */}
       {open && (
@@ -113,7 +138,6 @@ export default function Hero() {
               className="w-full border p-2 rounded mb-3"
             />
 
-            {/* ✅ VEHICLE NUMBER */}
             <label className="text-sm">Vehicle Number</label>
             <input
               type="text"

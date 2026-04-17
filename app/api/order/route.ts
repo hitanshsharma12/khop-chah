@@ -1,3 +1,5 @@
+// app/api/order/route.ts   (or wherever your POST handler is)
+
 let orderCount = 0;
 let lastDate = "";
 
@@ -15,9 +17,8 @@ export async function POST(req: Request) {
     parking,
   } = body;
 
-  // 📅 DAILY RESET
+  // Daily reset
   const today = new Date().toDateString();
-
   if (today !== lastDate) {
     orderCount = 0;
     lastDate = today;
@@ -26,28 +27,22 @@ export async function POST(req: Request) {
   orderCount++;
   const orderNumber = orderCount;
 
-  // ⏰ DATE TIME
   const orderTime = new Date().toLocaleString("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
   });
 
-  // 🛒 ITEMS (SAFE VERSION)
   const itemsText = cart
     .map((item: any, i: number) => {
-      const price =
-        typeof item.price === "string"
-          ? item.price.replace(/₹/g, "")
-          : item.price;
-
-      return `• ${item.name}  x${quantities?.[i] || 1}  - ₹${price}`;
+      const price = typeof item.price === "string" 
+        ? item.price.replace(/₹/g, "") 
+        : item.price;
+      return `• ${item.name} ×${quantities?.[i] || 1} - ₹${price}`;
     })
     .join("\n");
 
-  // 🚗 PARKING
   const parkingText = parking ? "Yes" : "No";
 
-  // 🧾 FINAL MESSAGE
   const message = `
 ● Order #${orderNumber}
 
@@ -69,10 +64,9 @@ ${address}
 • Parking: ${parkingText}
 
 ● Total: ₹${total}
-`;
+`.trim();
 
   const whatsappNumber = "919805073874";
-
   const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
   return Response.json({ url });

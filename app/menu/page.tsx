@@ -7,7 +7,9 @@ export default function MenuPage() {
 
   useEffect(() => {
     const data = localStorage.getItem("booking");
-    if (data) setBooking(JSON.parse(data));
+    if (data) {
+      setBooking(JSON.parse(data));
+    }
   }, []);
 
   const sendToWhatsApp = () => {
@@ -22,39 +24,53 @@ export default function MenuPage() {
 ⏱ Arriving in: ${booking.arrivingIn} mins
 
 📌 Please confirm my table.
-    `;
+    `.trim();
 
     const phone = "919805073874";
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-    window.open(url, "_blank");
+    // Improved WhatsApp opening (better iOS support)
+    const newWindow = window.open(url, "_blank");
+    
+    // Fallback for iOS/Safari issues
+    setTimeout(() => {
+      if (!newWindow || newWindow.closed) {
+        window.location.href = url;
+      }
+    }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-[#0B0F19] text-white flex flex-col items-center justify-center p-6">
 
-      <h1 className="text-2xl md:text-4xl font-bold mb-4">
-        Book Your Table 🍽
-      </h1>
+      <div className="w-full max-w-md text-center">
+        <h1 className="text-3xl md:text-5xl font-bold mb-8">
+          Book Your Table 🍽
+        </h1>
 
-      {booking && (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 w-full max-w-md">
+        {booking && (
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 text-left">
+            <h2 className="text-yellow-400 font-semibold mb-4 text-lg">Your Details</h2>
+            <div className="space-y-3 text-gray-200">
+              <p><span className="text-white">👥 People:</span> {booking.people}</p>
+              <p><span className="text-white">🚗 Parking:</span> {booking.parking ? "Yes" : "No"}</p>
+              <p><span className="text-white">🚘 Vehicle:</span> {booking.vehicle || "Not Provided"}</p>
+              <p><span className="text-white">⏱ Arriving in:</span> {booking.arrivingIn} minutes</p>
+            </div>
+          </div>
+        )}
 
-          <p>👥 {booking.people}</p>
-          <p>🚗 {booking.parking ? "Yes" : "No"}</p>
-          <p>🚘 {booking.vehicle || "Not Provided"}</p>
-          <p>⏱ {booking.arrivingIn} mins</p>
+        <button
+          onClick={sendToWhatsApp}
+          className="w-full bg-green-500 hover:bg-green-600 py-4 rounded-full font-semibold text-lg transition-all active:scale-95"
+        >
+          Send Booking on WhatsApp 📲
+        </button>
 
-        </div>
-      )}
-
-      <button
-        onClick={sendToWhatsApp}
-        className="w-full max-w-md bg-green-500 py-3 rounded-full font-semibold"
-      >
-        Send Booking on WhatsApp 📲
-      </button>
-
+        <p className="text-xs text-gray-500 mt-6">
+          You will be redirected to WhatsApp
+        </p>
+      </div>
     </div>
   );
 }
