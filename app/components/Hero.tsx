@@ -93,7 +93,7 @@ export default function Hero() {
       {/* Location Icon - Bottom Left (Fixed Position) */}
       <button
         onClick={scrollToVisit}
-        className="absolute bottom-8 left-6 md:left-10 z-20 
+        className="absolute bottom-10 right-6 md:left-10 z-20 
                    flex items-center justify-center w-14 h-14 
                    bg-white/10 hover:bg-white/20 backdrop-blur-md 
                    border border-white/30 rounded-full 
