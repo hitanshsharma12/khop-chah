@@ -300,7 +300,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
             onClick={handleOrder}
             className="flex-1 bg-[#8B5E3C] text-white py-3 rounded-lg"
           >
-            Order ₹{total}
+            Order Take Away ₹{total}
           </button>
 
           <button
