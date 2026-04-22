@@ -69,8 +69,14 @@ export default function Hero() {
           <span className="text-amber-300">खोप Cha!</span>
         </h1>
 
+        {/* 🔥 UPDATED TEXT */}
         <p className="mt-4 text-gray-200 text-sm md:text-lg">
           • FAST FOOD • DAILY NEEDS • HOME DELIVERY
+        </p>
+
+        <p className="mt-2 text-yellow-300 text-xs md:text-sm italic">
+         " रोहड़ू की मिट्टी , शहर वाला स्टाइल ! "
+         
         </p>
 
         {/* Buttons */}
@@ -90,7 +96,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Location Icon - Bottom Left (Fixed Position) */}
+      {/* Location Icon */}
       <button
         onClick={scrollToVisit}
         className="absolute bottom-10 right-6 md:left-10 z-20 
