@@ -9,34 +9,80 @@ type Item = {
 };
 
 const data: Item[] = [
-  // 🔥 New Arrival
-  { name: "Tornado Potato Spiral (Plain)", price: "₹40", category: "New Arrival" },
-  { name: "Tornado Potato (Tangy)", price: "₹60", category: "New Arrival" },
-  { name: "Crispy Ginger Chicken (1 leg)", price: "₹150", category: "New Arrival" },
-  { name: "Crispy Ginger Chicken (2 leg)", price: "₹220", category: "New Arrival" },
 
-  // 🍕 Pizza
-  { name: "Margarita Pizza (S/M/L)", price: "₹110 / 180 / 280", category: "Pizza & Fries" },
-  { name: "Paneer Corn Pizza", price: "₹130 / 190 / 280", category: "Pizza & Fries" },
-  { name: "Veg Supreme Pizza", price: "₹150 / 200 / 280", category: "Pizza & Fries" },
-  { name: "Fully Loaded Pizza", price: "₹160 / 230 / 300", category: "Pizza & Fries" },
+  // 🥟 MOMOS
+  { name: "Special Kurkure Momo (8 pcs)", price: "₹140", category: "Momos" },
+  { name: "Special Kurkure Momo (5 pcs)", price: "₹80", category: "Momos" },
+  { name: "Kurkure Momo with Dip (8 pcs)", price: "₹150", category: "Momos" },
+  { name: "Kurkure Momo with Dip (5 pcs)", price: "₹90", category: "Momos" },
+  { name: "Extra Dip", price: "₹20", category: "Momos" },
+  { name: "Fried Momo (10 pcs / 6 pcs)", price: "₹110 / 60", category: "Momos" },
+  { name: "Steam Momo (10 pcs / 6 pcs)", price: "₹100 / 50", category: "Momos" },
 
-  // 🍟 Fries
-  { name: "Plain Fries", price: "₹80 / 120", category: "Pizza & Fries" },
-  { name: "Masala Fries", price: "₹90 / 130", category: "Pizza & Fries" },
-  { name: "Peri Peri Fries + Dip", price: "₹100 / 150", category: "Pizza & Fries" },
+  // 🍟 FRIES
+  { name: "Plain Fries", price: "₹80 / 140", category: "Fries" },
+  { name: "Peri Peri Fries with Cheese Dip", price: "₹100 / 150", category: "Fries" },
+  { name: "Masala Fries", price: "₹100 / 150", category: "Fries" },
 
-  // 🥪 Sandwich
-  { name: "Cold Sandwich (4 pcs)", price: "₹80", category: "Sandwich" },
-  { name: "Veg Grilled Sandwich", price: "₹90", category: "Sandwich" },
-  { name: "Grilled Paneer Sandwich", price: "₹150", category: "Sandwich" },
-  { name: "Khopcha Special Sandwich + Fries", price: "₹150", category: "Sandwich" },
-  { name: "Shredded Chicken Sandwich", price: "₹150", category: "Sandwich" },
+  // 🍔 BURGERS
+  { name: "Classic Burger", price: "₹45", category: "Burgers" },
+  { name: "BBQ Burger", price: "₹50", category: "Burgers" },
+  { name: "Chilli Lava Burger", price: "₹50", category: "Burgers" },
+  { name: "Paneer Ginger Burger", price: "₹65", category: "Burgers" },
 
-  // 🥟 Momos
-  { name: "Steam Momo (6/10 pcs)", price: "₹50 / 90", category: "Momos" },
-  { name: "Fried Momo (6/10 pcs)", price: "₹60 / 110", category: "Momos" },
-  { name: "Special Kurkure Momo", price: "₹80 / 140", category: "Momos" },
+  // 🍕 PIZZA
+  { name: "Margherita Pizza (S/M/L)", price: "₹110 / 190 / 230", category: "Pizza" },
+  { name: "Paneer Corn Pizza (S/M/L)", price: "₹140 / 220 / 300", category: "Pizza" },
+  { name: "Farmhouse Special (S/M/L)", price: "₹180 / 260 / 300", category: "Pizza" },
+  { name: "Veg Supreme (S/M/L)", price: "₹200 / 340 / 500", category: "Pizza" },
+  { name: "Full Loaded Pizza (S/M/L)", price: "₹250 / 380 / 470", category: "Pizza" },
+
+  // 🥤 DRINKS
+  { name: "Mint Mojito", price: "₹80", category: "Drinks" },
+  { name: "Black Current Mojito", price: "₹80", category: "Drinks" },
+  { name: "Watermelon Mojito", price: "₹80", category: "Drinks" },
+  { name: "Lemon Iced Tea", price: "₹80", category: "Drinks" },
+  { name: "Fresh Lime Soda", price: "₹70", category: "Drinks" },
+  { name: "Cold Coffee", price: "₹80", category: "Drinks" },
+  { name: "Strawberry Shake", price: "₹80", category: "Drinks" },
+  { name: "Banana Shake", price: "₹90", category: "Drinks" },
+  { name: "Oreo Shake", price: "₹90", category: "Drinks" },
+  { name: "Pineapple Shake", price: "₹80", category: "Drinks" },
+  { name: "Black Current Shake", price: "₹80", category: "Drinks" },
+  { name: "Orange Shake", price: "₹80", category: "Drinks" },
+  { name: "Cold Drink (Coke/Sprite/Dew)", price: "₹30", category: "Drinks" },
+
+  // ☕ HOT BEVERAGES
+  { name: "Hot Coffee", price: "₹40", category: "Hot Beverages" },
+  { name: "Tea", price: "₹25", category: "Hot Beverages" },
+  { name: "Kulhad Tea", price: "₹30", category: "Hot Beverages" },
+
+  // 🎯 COMBOS
+  {
+    name: "Kurkure Momo + Fries + Sandwich + 2 Drinks",
+    price: "₹450",
+    category: "Combos",
+  },
+  {
+    name: "Kurkure Momo + Dip + 2 Drinks + Sandwich",
+    price: "₹280",
+    category: "Combos",
+  },
+  {
+    name: "Sandwich + Fries + 2 Drinks",
+    price: "₹200",
+    category: "Combos",
+  },
+  {
+    name: "Paneer Corn Pizza + Kurkure Momos + 2 Drinks",
+    price: "₹380",
+    category: "Combos",
+  },
+  {
+    name: "Corn Pizza + Fries + 2 Drinks",
+    price: "₹220",
+    category: "Combos",
+  },
 ];
 
 type Props = {
@@ -71,14 +117,13 @@ export default function MenuList({ category, setCart, setOpen }: Props) {
                        bg-white/10 border border-white/10 backdrop-blur-md
                        hover:scale-[1.02] transition"
           >
-            {/* Left */}
+
             <div>
               <h3 className="text-white font-semibold text-base md:text-lg">
                 {item.name}
               </h3>
             </div>
 
-            {/* Right */}
             <div className="flex justify-between items-center sm:gap-4">
 
               <span className="text-yellow-400 font-bold text-sm md:text-base">

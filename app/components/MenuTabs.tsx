@@ -4,10 +4,13 @@ import { useState } from "react";
 
 const categories = [
   "All Items",
-  "New Arrival",
-  "Pizza & Fries",
-  "Sandwich",
   "Momos",
+  "Combos",
+  "Fries",
+  "Burgers",
+  "Pizza",
+  "Drinks",
+  "Hot Beverages",
 ];
 
 export default function MenuTabs({ setCategory }: any) {
@@ -17,11 +20,11 @@ export default function MenuTabs({ setCategory }: any) {
     <section className="py-10 text-center relative z-10">
 
       <h2 className="text-4xl font-bold text-white">
-        Our <span className="text-amber-400">Specialties</span>
+        Our <span className="text-amber-400">Menu</span>
       </h2>
 
       <p className="text-gray-300 mb-6 text-sm uppercase tracking-widest">
-        Menu
+        Cafe Khopcha
       </p>
 
       <div className="flex gap-2 flex-wrap justify-center px-2">
