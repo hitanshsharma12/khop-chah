@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const categories = [
   "All Items",
@@ -15,6 +15,11 @@ const categories = [
 
 export default function MenuTabs({ setCategory }: any) {
   const [active, setActive] = useState("Momos");
+
+  // 🔥 IMPORTANT FIX
+  useEffect(() => {
+    setCategory("Momos");
+  }, []);
 
   return (
     <section className="py-10 text-center relative z-10">
