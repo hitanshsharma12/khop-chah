@@ -14,7 +14,7 @@ const categories = [
 ];
 
 export default function MenuTabs({ setCategory }: any) {
-  const [active, setActive] = useState("All Items");
+  const [active, setActive] = useState("Momos");
 
   return (
     <section className="py-10 text-center relative z-10">
