@@ -1,7 +1,5 @@
 // app/api/order/route.ts
 
-// NOTE: In-memory counters reset on every server restart / cold start.
-// For production, persist orderCount in a DB or Redis instead.
 let orderCount = 0;
 let lastDate = "";
 
@@ -50,7 +48,7 @@ export async function POST(req: Request) {
 ● Items:
 ${itemsText}
 
-• Pickup Time: ${time} min
+• Pickup Time: ${time}
 
 ● Address:
 ${address}
@@ -62,8 +60,6 @@ ${address}
 
   const whatsappNumber = "919805073874";
 
-  // Return the plain wa.me URL — the CLIENT decides how to open it.
-  // This avoids any server-side redirect that Safari would block.
   const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
   return Response.json({ url });
