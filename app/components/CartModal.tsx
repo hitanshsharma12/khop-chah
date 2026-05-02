@@ -8,6 +8,36 @@ declare global {
   }
 }
 
+// ✅ iOS detection
+const isIOS = () =>
+  typeof navigator !== "undefined" &&
+  /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+// ✅ WhatsApp opener:
+// iOS   → blank tab open karo pehle (Safari gesture token fix)
+// Android → seedha URL ke saath window.open — single prompt, direct WhatsApp
+const openWhatsApp = async (getUrl: () => Promise<string>) => {
+  if (isIOS()) {
+    // iOS: blank tab synchronously open, then redirect after fetch
+    const waWindow = window.open("", "_blank");
+    try {
+      const url = await getUrl();
+      if (waWindow && !waWindow.closed) {
+        waWindow.location.href = url;
+      } else {
+        window.location.href = url;
+      }
+    } catch (err) {
+      waWindow?.close();
+      throw err;
+    }
+  } else {
+    // Android: fetch first, then open WhatsApp URL directly — no double prompt
+    const url = await getUrl();
+    window.open(url, "_blank");
+  }
+};
+
 export default function CartModal({ cart, setCart, setOpen }: any) {
 
   const [name, setName] = useState("");
@@ -30,13 +60,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       alert("Location not supported");
       return;
     }
-
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setLocation({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       },
       () => {
         alert("Permission denied ❌");
@@ -47,9 +73,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   // 📞 PHONE VALIDATION
   const handlePhoneChange = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
-    if (cleaned.length <= 10) {
-      setPhone(cleaned);
-    }
+    if (cleaned.length <= 10) setPhone(cleaned);
   };
 
   const isValidPhone = (num: string) => /^[0-9]{10}$/.test(num);
@@ -77,65 +101,45 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     return acc + price * quantities[i];
   }, 0);
 
-  // 🧾 COD ORDER — iOS safe ✅
+  // 🧾 COD ORDER
   const handleOrder = async () => {
-
     if (!name || !phone || !time || !address) {
       alert("⚠️ Fill all details (Name, Phone, Time, Landmark)");
       return;
     }
-
     if (!isValidPhone(phone)) {
       alert("Enter valid 10 digit number ❌");
       return;
     }
 
-    const waWindow = window.open("", "_blank");
-
     try {
-      const res = await fetch("/api/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          phone,
-          time,
-          cart,
-          quantities,
-          selectedSize,
-          total,
-          location,
-          address,
-          parking,
-          payment: "COD",
-        }),
+      await openWhatsApp(async () => {
+        const res = await fetch("/api/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name, phone, time, cart, quantities,
+            selectedSize, total, location, address, parking,
+            payment: "COD",
+          }),
+        });
+        const data = await res.json();
+        return data.url;
       });
-
-      const data = await res.json();
-
-      if (waWindow && !waWindow.closed) {
-        waWindow.location.href = data.url;
-      } else {
-        window.location.href = data.url;
-      }
 
       setCart([]);
       setOpen(false);
-
     } catch (err) {
-      waWindow?.close();
       alert("Something went wrong. Please try again.");
     }
   };
 
-  // 💳 ONLINE PAYMENT — iOS safe ✅
+  // 💳 ONLINE PAYMENT
   const handleOnlinePayment = async () => {
-
     if (!name || !phone || !time || !address) {
       alert("⚠️ Fill all details (Name, Phone, Time, Address)");
       return;
     }
-
     if (!isValidPhone(phone)) {
       alert("Enter valid phone number");
       return;
@@ -144,13 +148,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     const res = await fetch("/api/payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: total,
-        name,
-        phone,
-        cart,
-        address,
-      }),
+      body: JSON.stringify({ amount: total, name, phone, cart, address }),
     });
 
     const data = await res.json();
@@ -165,41 +163,24 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
       handler: async function () {
         alert("Payment Successful ✅");
-
-        const waWindow = window.open("", "_blank");
-
         try {
-          const orderRes = await fetch("/api/order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name,
-              phone,
-              time,
-              cart,
-              quantities,
-              selectedSize,
-              total,
-              location,
-              address,
-              parking,
-              payment: "Online",
-            }),
+          await openWhatsApp(async () => {
+            const orderRes = await fetch("/api/order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name, phone, time, cart, quantities,
+                selectedSize, total, location, address, parking,
+                payment: "Online",
+              }),
+            });
+            const orderData = await orderRes.json();
+            return orderData.url;
           });
-
-          const orderData = await orderRes.json();
-
-          if (waWindow && !waWindow.closed) {
-            waWindow.location.href = orderData.url;
-          } else {
-            window.location.href = orderData.url;
-          }
 
           setCart([]);
           setOpen(false);
-
         } catch (err) {
-          waWindow?.close();
           alert("Something went wrong sending your order. Please contact us.");
         }
       },
@@ -211,7 +192,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50 p-3">
-
       <div className="bg-[#f8f5f2] w-full max-w-2xl rounded-xl p-4 md:p-6 overflow-y-auto max-h-[90vh] relative">
 
         <button
@@ -226,10 +206,8 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         {cart.map((item: any, i: number) => {
           const prices = getPrices(item.price);
           const sizes = ["S", "M", "L"];
-
           return (
             <div key={i} className="border p-3 rounded-lg mb-3 bg-white">
-
               <h3 className="font-semibold">{item.name}</h3>
 
               {prices.length > 1 && (
@@ -243,9 +221,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                         setSelectedSize(newSize);
                       }}
                       className={`px-3 py-1 rounded-full text-xs ${
-                        selectedSize[i] === idx
-                          ? "bg-[#8B5E3C] text-white"
-                          : "bg-gray-200"
+                        selectedSize[i] === idx ? "bg-[#8B5E3C] text-white" : "bg-gray-200"
                       }`}
                     >
                       {sizes[idx]} ₹{p}
@@ -264,11 +240,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                   <span>{quantities[i]}</span>
                   <button onClick={() => updateQty(i, 1)} className="px-2 bg-gray-200 rounded">+</button>
                 </div>
-
-                <button
-                  onClick={() => handleRemove(i)}
-                  className="text-red-500 text-sm"
-                >
+                <button onClick={() => handleRemove(i)} className="text-red-500 text-sm">
                   Remove
                 </button>
               </div>
@@ -299,7 +271,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
         <input
           type="text"
-          placeholder='Pickup Time (e.g. 30 min, ASAP, 1 hour)'
+          placeholder="Pickup Time (e.g. 30 min, ASAP, 1 hour)"
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"

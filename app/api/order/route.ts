@@ -18,7 +18,10 @@ export async function POST(req: Request) {
   orderCount++;
   const orderNumber = orderCount;
 
+  // ✅ FIX: timeZone: "Asia/Kolkata" added — without this, server uses UTC
+  // which is 5:30 hours behind IST, causing wrong time in WhatsApp message
   const orderTime = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
     dateStyle: "medium",
     timeStyle: "short",
   });
@@ -56,6 +59,8 @@ ${address}
 • Parking: ${parkingText}
 
 ● Total: ₹${total}
+
+⚠️ Note: Delivery charges will be extra as per location
 `.trim();
 
   const whatsappNumber = "919805073874";
