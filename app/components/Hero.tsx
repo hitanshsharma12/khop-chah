@@ -79,7 +79,7 @@ export default function Hero() {
         </p>
 
         <p className="mt-2 text-yellow-300 text-xs md:text-sm italic">
-          " रोहड़ू की मिट्टी , शहर वाला स्टाइल ! "
+          " रोहड़ू की मिट्टी , शहर वाला टच ! "
         </p>
 
         {/* Buttons */}
