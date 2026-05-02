@@ -77,7 +77,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     return acc + price * quantities[i];
   }, 0);
 
-  // 🧾 COD ORDER
+  // 🧾 COD ORDER — iOS safe ✅
   const handleOrder = async () => {
 
     if (!name || !phone || !time || !address) {
@@ -95,31 +95,50 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       return;
     }
 
-    const res = await fetch("/api/order", {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        phone,
-        time,
-        cart,
-        quantities,
-        selectedSize,
-        total,
-        location,
-        address,
-        parking,
-        payment: "COD",
-      }),
-    });
+    // ✅ Step 1: Open blank tab FIRST — synchronously inside click handler
+    // Safari only allows window.open() during a direct user gesture.
+    // Any await before this will kill the gesture token and block the popup.
+    const waWindow = window.open("", "_blank");
 
-    const data = await res.json();
-    window.open(data.url, "_blank");
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          time,
+          cart,
+          quantities,
+          selectedSize,
+          total,
+          location,
+          address,
+          parking,
+          payment: "COD",
+        }),
+      });
 
-    setCart([]);
-    setOpen(false);
+      const data = await res.json();
+
+      // ✅ Step 2: Navigate the already-open tab to WhatsApp URL
+      if (waWindow && !waWindow.closed) {
+        waWindow.location.href = data.url;
+      } else {
+        // Fallback: window.open was blocked, redirect current tab
+        window.location.href = data.url;
+      }
+
+      setCart([]);
+      setOpen(false);
+
+    } catch (err) {
+      waWindow?.close(); // Don't leave a blank tab open on error
+      alert("Something went wrong. Please try again.");
+    }
   };
 
-  // 💳 ONLINE PAYMENT
+  // 💳 ONLINE PAYMENT — iOS safe ✅
   const handleOnlinePayment = async () => {
 
     if (!name || !phone || !time || !address) {
@@ -139,6 +158,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
     const res = await fetch("/api/payment", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         amount: total,
         name,
@@ -161,28 +181,44 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       handler: async function () {
         alert("Payment Successful ✅");
 
-        const orderRes = await fetch("/api/order", {
-          method: "POST",
-          body: JSON.stringify({
-            name,
-            phone,
-            time,
-            cart,
-            quantities,
-            selectedSize,
-            total,
-            location,
-            address,
-            parking,
-            payment: "Online",
-          }),
-        });
+        // ✅ Inside Razorpay's handler callback, open blank tab first
+        // then redirect after the fetch — same iOS-safe pattern
+        const waWindow = window.open("", "_blank");
 
-        const orderData = await orderRes.json();
-        window.open(orderData.url, "_blank");
+        try {
+          const orderRes = await fetch("/api/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name,
+              phone,
+              time,
+              cart,
+              quantities,
+              selectedSize,
+              total,
+              location,
+              address,
+              parking,
+              payment: "Online",
+            }),
+          });
 
-        setCart([]);
-        setOpen(false);
+          const orderData = await orderRes.json();
+
+          if (waWindow && !waWindow.closed) {
+            waWindow.location.href = orderData.url;
+          } else {
+            window.location.href = orderData.url;
+          }
+
+          setCart([]);
+          setOpen(false);
+
+        } catch (err) {
+          waWindow?.close();
+          alert("Something went wrong sending your order. Please contact us.");
+        }
       },
     };
 
@@ -288,12 +324,11 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
         <input
           type="text"
-          placeholder="Location Discprition"
+          placeholder="Location Description"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="border p-2 rounded-lg w-full mb-2"
         />
-  
 
         <div className="flex gap-2">
           <button
@@ -311,10 +346,10 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           </button>
         </div>
 
-        {/* 🔥 SEXY ONLINE PAYMENT BUTTON */}
+        {/* 🔥 ONLINE PAYMENT BUTTON */}
         <button
           onClick={handleOnlinePayment}
-       className="w-full mt-3 bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:scale-[1.02] transition"
+          className="w-full mt-3 bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:scale-[1.02] transition"
         >
           Place Home Delivery (Pay Online)
         </button>

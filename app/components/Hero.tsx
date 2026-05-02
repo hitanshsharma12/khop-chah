@@ -27,10 +27,15 @@ export default function Hero() {
   const scrollToVisit = () => {
     const visitSection = document.getElementById("visit");
     if (visitSection) {
-      visitSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      visitSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  // ✅ Smooth scroll to Menu section
+  const scrollToMenu = () => {
+    const menuSection = document.getElementById("menu");
+    if (menuSection) {
+      menuSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -69,14 +74,12 @@ export default function Hero() {
           <span className="text-amber-300">खोप Cha!</span>
         </h1>
 
-        {/* 🔥 UPDATED TEXT */}
         <p className="mt-4 text-gray-200 text-sm md:text-lg">
           • FAST FOOD • DAILY NEEDS • HOME DELIVERY
         </p>
 
         <p className="mt-2 text-yellow-300 text-xs md:text-sm italic">
-         " रोहड़ू की मिट्टी , शहर वाला स्टाइल ! "
-         
+          " रोहड़ू की मिट्टी , शहर वाला स्टाइल ! "
         </p>
 
         {/* Buttons */}
@@ -88,7 +91,9 @@ export default function Hero() {
             Book a Table
           </button>
 
+          {/* ✅ Scrolls smoothly to #menu section */}
           <button
+            onClick={scrollToMenu}
             className="px-6 py-2 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-black transition"
           >
             View Menu ↓

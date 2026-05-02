@@ -12,6 +12,14 @@ export default function MenuPage() {
     }
   }, []);
 
+  /**
+   * iOS / Safari rules for opening external URLs:
+   *  1. MUST be called synchronously inside a user-gesture handler (onClick).
+   *  2. window.open() with "_blank" is often blocked by Safari — use
+   *     window.location.href instead, which always works.
+   *  3. Never put the redirect inside setTimeout, async callbacks, or
+   *     after an await — Safari drops the user-gesture token immediately.
+   */
   const sendToWhatsApp = () => {
     if (!booking) return;
 
@@ -29,20 +37,12 @@ export default function MenuPage() {
     const phone = "919805073874";
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-    // Improved WhatsApp opening (better iOS support)
-    const newWindow = window.open(url, "_blank");
-    
-    // Fallback for iOS/Safari issues
-    setTimeout(() => {
-      if (!newWindow || newWindow.closed) {
-        window.location.href = url;
-      }
-    }, 500);
+    // ✅ iOS-safe: synchronous, no window.open(), no setTimeout
+    window.location.href = url;
   };
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white flex flex-col items-center justify-center p-6">
-
       <div className="w-full max-w-md text-center">
         <h1 className="text-3xl md:text-5xl font-bold mb-8">
           Book Your Table 🍽
@@ -50,12 +50,25 @@ export default function MenuPage() {
 
         {booking && (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 text-left">
-            <h2 className="text-yellow-400 font-semibold mb-4 text-lg">Your Details</h2>
+            <h2 className="text-yellow-400 font-semibold mb-4 text-lg">
+              Your Details
+            </h2>
             <div className="space-y-3 text-gray-200">
-              <p><span className="text-white">👥 People:</span> {booking.people}</p>
-              <p><span className="text-white">🚗 Parking:</span> {booking.parking ? "Yes" : "No"}</p>
-              <p><span className="text-white">🚘 Vehicle:</span> {booking.vehicle || "Not Provided"}</p>
-              <p><span className="text-white">⏱ Arriving in:</span> {booking.arrivingIn} minutes</p>
+              <p>
+                <span className="text-white">👥 People:</span> {booking.people}
+              </p>
+              <p>
+                <span className="text-white">🚗 Parking:</span>{" "}
+                {booking.parking ? "Yes" : "No"}
+              </p>
+              <p>
+                <span className="text-white">🚘 Vehicle:</span>{" "}
+                {booking.vehicle || "Not Provided"}
+              </p>
+              <p>
+                <span className="text-white">⏱ Arriving in:</span>{" "}
+                {booking.arrivingIn} minutes
+              </p>
             </div>
           </div>
         )}

@@ -16,13 +16,13 @@ const categories = [
 export default function MenuTabs({ setCategory }: any) {
   const [active, setActive] = useState("Momos");
 
-  // 🔥 IMPORTANT FIX
   useEffect(() => {
     setCategory("Momos");
   }, []);
 
   return (
-    <section className="py-10 text-center relative z-10">
+    // ✅ id="menu" added here — Hero's "View Menu" button scrolls to this
+    <section id="menu" className="py-10 text-center relative z-10">
 
       <h2 className="text-4xl font-bold text-white">
         Our <span className="text-amber-400">Menu</span>
