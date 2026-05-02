@@ -90,14 +90,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       return;
     }
 
-    if (Number(time) <= 0) {
-      alert("Enter valid pickup time ⏰");
-      return;
-    }
-
-    // ✅ Step 1: Open blank tab FIRST — synchronously inside click handler
-    // Safari only allows window.open() during a direct user gesture.
-    // Any await before this will kill the gesture token and block the popup.
     const waWindow = window.open("", "_blank");
 
     try {
@@ -121,11 +113,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
       const data = await res.json();
 
-      // ✅ Step 2: Navigate the already-open tab to WhatsApp URL
       if (waWindow && !waWindow.closed) {
         waWindow.location.href = data.url;
       } else {
-        // Fallback: window.open was blocked, redirect current tab
         window.location.href = data.url;
       }
 
@@ -133,7 +123,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       setOpen(false);
 
     } catch (err) {
-      waWindow?.close(); // Don't leave a blank tab open on error
+      waWindow?.close();
       alert("Something went wrong. Please try again.");
     }
   };
@@ -148,11 +138,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
     if (!isValidPhone(phone)) {
       alert("Enter valid phone number");
-      return;
-    }
-
-    if (Number(time) <= 0) {
-      alert("Enter valid pickup time ⏰");
       return;
     }
 
@@ -181,8 +166,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       handler: async function () {
         alert("Payment Successful ✅");
 
-        // ✅ Inside Razorpay's handler callback, open blank tab first
-        // then redirect after the fetch — same iOS-safe pattern
         const waWindow = window.open("", "_blank");
 
         try {
@@ -315,8 +298,8 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         />
 
         <input
-          type="number"
-          placeholder="Pickup Time (minutes)"
+          type="text"
+          placeholder='Pickup Time (e.g. 30 min, ASAP, 1 hour)'
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"
@@ -335,7 +318,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
             onClick={handleOrder}
             className="flex-1 bg-[#8B5E3C] text-white py-3 rounded-lg"
           >
-            Order Take Away ₹{total}
+            Order Now ₹{total}
           </button>
 
           <button
@@ -346,13 +329,10 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           </button>
         </div>
 
-        {/* 🔥 ONLINE PAYMENT BUTTON */}
-        <button
-          onClick={handleOnlinePayment}
-          className="w-full mt-3 bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:scale-[1.02] transition"
-        >
-          Place Home Delivery (Pay Online)
-        </button>
+        {/* 🚚 Delivery Notice */}
+        <p className="text-center text-xs text-gray-500 mt-3">
+          🚚 Delivery charges will be extra as per location
+        </p>
 
       </div>
     </div>
