@@ -63,7 +63,7 @@ ${address}
 ⚠️ Note: Delivery charges will be extra as per location
 `.trim();
 
-  const whatsappNumber = "919805073874";
+  const whatsappNumber = "917986383165";
 
   const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
