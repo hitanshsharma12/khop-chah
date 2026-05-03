@@ -8,17 +8,17 @@ declare global {
   }
 }
 
+// ✅ Minimum order constant
+const MIN_ORDER = 300;
+
 // ✅ iOS detection
 const isIOS = () =>
   typeof navigator !== "undefined" &&
   /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-// ✅ WhatsApp opener:
-// iOS   → blank tab open karo pehle (Safari gesture token fix)
-// Android → seedha URL ke saath window.open — single prompt, direct WhatsApp
+// ✅ WhatsApp opener
 const openWhatsApp = async (getUrl: () => Promise<string>) => {
   if (isIOS()) {
-    // iOS: blank tab synchronously open, then redirect after fetch
     const waWindow = window.open("", "_blank");
     try {
       const url = await getUrl();
@@ -32,14 +32,12 @@ const openWhatsApp = async (getUrl: () => Promise<string>) => {
       throw err;
     }
   } else {
-    // Android: fetch first, then open WhatsApp URL directly — no double prompt
     const url = await getUrl();
     window.open(url, "_blank");
   }
 };
 
 export default function CartModal({ cart, setCart, setOpen }: any) {
-
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [time, setTime] = useState("");
@@ -90,9 +88,15 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   };
 
   const handleRemove = (i: number) => {
-    setCart((prev: any) => prev.filter((_: any, index: number) => index !== i));
-    setQuantities((prev: any) => prev.filter((_: any, index: number) => index !== i));
-    setSelectedSize((prev: any) => prev.filter((_: any, index: number) => index !== i));
+    setCart((prev: any) =>
+      prev.filter((_: any, index: number) => index !== i)
+    );
+    setQuantities((prev: any) =>
+      prev.filter((_: any, index: number) => index !== i)
+    );
+    setSelectedSize((prev: any) =>
+      prev.filter((_: any, index: number) => index !== i)
+    );
   };
 
   const total = cart.reduce((acc: number, item: any, i: number) => {
@@ -107,8 +111,15 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       alert("⚠️ Fill all details (Name, Phone, Time, Landmark)");
       return;
     }
+
     if (!isValidPhone(phone)) {
       alert("Enter valid 10 digit number ❌");
+      return;
+    }
+
+    // ✅ Minimum order validation
+    if (total < MIN_ORDER) {
+      alert(`⚠️ Minimum order value is ₹${MIN_ORDER}`);
       return;
     }
 
@@ -118,8 +129,16 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name, phone, time, cart, quantities,
-            selectedSize, total, location, address, parking,
+            name,
+            phone,
+            time,
+            cart,
+            quantities,
+            selectedSize,
+            total,
+            location,
+            address,
+            parking,
             payment: "COD",
           }),
         });
@@ -140,8 +159,15 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       alert("⚠️ Fill all details (Name, Phone, Time, Address)");
       return;
     }
+
     if (!isValidPhone(phone)) {
       alert("Enter valid phone number");
+      return;
+    }
+
+    // ✅ Minimum order validation
+    if (total < MIN_ORDER) {
+      alert(`⚠️ Minimum order value is ₹${MIN_ORDER}`);
       return;
     }
 
@@ -154,7 +180,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     const data = await res.json();
 
     const options = {
-      key: "YOUR_RAZORPAY_KEY", // 🔥 replace
+      key: "YOUR_RAZORPAY_KEY",
       amount: data.amount,
       currency: "INR",
       name: "Cafe Khopcha",
@@ -163,14 +189,23 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
       handler: async function () {
         alert("Payment Successful ✅");
+
         try {
           await openWhatsApp(async () => {
             const orderRes = await fetch("/api/order", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                name, phone, time, cart, quantities,
-                selectedSize, total, location, address, parking,
+                name,
+                phone,
+                time,
+                cart,
+                quantities,
+                selectedSize,
+                total,
+                location,
+                address,
+                parking,
                 payment: "Online",
               }),
             });
@@ -181,7 +216,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           setCart([]);
           setOpen(false);
         } catch (err) {
-          alert("Something went wrong sending your order. Please contact us.");
+          alert("Error sending order ❌");
         }
       },
     };
@@ -206,6 +241,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         {cart.map((item: any, i: number) => {
           const prices = getPrices(item.price);
           const sizes = ["S", "M", "L"];
+
           return (
             <div key={i} className="border p-3 rounded-lg mb-3 bg-white">
               <h3 className="font-semibold">{item.name}</h3>
@@ -221,7 +257,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                         setSelectedSize(newSize);
                       }}
                       className={`px-3 py-1 rounded-full text-xs ${
-                        selectedSize[i] === idx ? "bg-[#8B5E3C] text-white" : "bg-gray-200"
+                        selectedSize[i] === idx
+                          ? "bg-[#8B5E3C] text-white"
+                          : "bg-gray-200"
                       }`}
                     >
                       {sizes[idx]} ₹{p}
@@ -240,6 +278,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                   <span>{quantities[i]}</span>
                   <button onClick={() => updateQty(i, 1)} className="px-2 bg-gray-200 rounded">+</button>
                 </div>
+
                 <button onClick={() => handleRemove(i)} className="text-red-500 text-sm">
                   Remove
                 </button>
@@ -271,7 +310,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
         <input
           type="text"
-          placeholder="Pickup Time (e.g. 30 min, ASAP, 1 hour)"
+          placeholder="Pickup Time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="border p-2 rounded-lg w-full mb-3"
@@ -304,6 +343,11 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
         {/* 🚚 Delivery Notice */}
         <p className="text-center text-xs text-gray-500 mt-3">
           🚚 Delivery charges will be extra as per location
+        </p>
+
+        {/* ⚠️ Minimum Order */}
+        <p className="text-center text-sm text-red-500 font-medium mt-2">
+          ⚠️ Minimum order value is ₹{MIN_ORDER}
         </p>
 
       </div>
