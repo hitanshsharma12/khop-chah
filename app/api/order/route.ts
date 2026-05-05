@@ -28,9 +28,26 @@ export async function POST(req: Request) {
 
   const itemsText = (cart ?? [])
   .map((item: any, i: number) => {
-    return `• ${item.name} ${
-      item.size ? `(${item.size})` : ""
-    } ×${quantities?.[i] ?? 1} - ${item.price}`;
+    let price = item.price;
+    let sizeText = "";
+
+    if (typeof price === "string" && price.includes("/")) {
+      const options = price.split("/").map((p: string) => p.trim());
+
+      // 👇 agar 3 prices hain → S M L
+      if (options.length === 3) {
+        price = options[0]; // default S
+        sizeText = " (S)";
+      }
+
+      // 👇 agar 2 prices hain → small/large type
+      else if (options.length === 2) {
+        price = options[0];
+        sizeText = " (Small)";
+      }
+    }
+
+    return `• ${item.name}${sizeText} ×${quantities?.[i] ?? 1} - ${price}`;
   })
   .join("\n");
 
