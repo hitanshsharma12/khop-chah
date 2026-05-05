@@ -27,14 +27,12 @@ export async function POST(req: Request) {
   });
 
   const itemsText = (cart ?? [])
-    .map((item: any, i: number) => {
-      const price =
-        typeof item.price === "string"
-          ? item.price.replace(/₹/g, "")
-          : item.price;
-      return `• ${item.name} ×${quantities?.[i] ?? 1} - ₹${price}`;
-    })
-    .join("\n");
+  .map((item: any, i: number) => {
+    return `• ${item.name} ${
+      item.size ? `(${item.size})` : ""
+    } ×${quantities?.[i] ?? 1} - ${item.price}`;
+  })
+  .join("\n");
 
   const parkingText = parking ? "Yes" : "No";
 

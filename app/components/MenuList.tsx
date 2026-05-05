@@ -100,10 +100,37 @@ export default function MenuList({ category, setCart, setOpen }: Props) {
   }, [category]);
 
   const handleAdd = (item: Item) => {
-    setCart((prev: any) => [...prev, item]);
-    setTimeout(() => setOpen(true), 100);
-  };
+  let finalPrice = item.price;
+  let size = "";
 
+  if (item.price.includes("/")) {
+    const options = item.price.split("/").map(p => p.trim());
+
+    const choice = prompt(
+      `Select Size:\n1. S (${options[0]})\n2. M (${options[1]})\n3. L (${options[2]})`
+    );
+
+    if (!choice) return;
+
+    const index = Number(choice) - 1;
+
+    if (options[index]) {
+      finalPrice = options[index];
+      size = ["S", "M", "L"][index]; // 👈 IMPORTANT
+    }
+  }
+
+  setCart((prev: any) => [
+    ...prev,
+    {
+      name: item.name,
+      price: finalPrice,
+      size, // 👈 SEND THIS
+    },
+  ]);
+
+  setTimeout(() => setOpen(true), 100);
+};
   return (
     <section className="py-10 px-4 md:px-6 relative z-10">
 
