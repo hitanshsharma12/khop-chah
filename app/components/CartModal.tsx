@@ -9,7 +9,7 @@ declare global {
 }
 
 // ✅ Minimum order constant
-const MIN_ORDER = 300;
+const MIN_ORDER = 150;
 
 // ✅ iOS detection
 const isIOS = () =>

@@ -1,14 +1,29 @@
 "use client";
 
 import { useMemo } from "react";
+import { Flame } from "lucide-react";
 
 type Item = {
   name: string;
   price: string;
   category: string;
+  isHot?: boolean;
 };
 
 const data: Item[] = [
+  // 🔥 SPECIAL COMBOS (TOP HIGHLIGHT)
+  {
+    name: "Best Seller Student Combo - Kurkure Momo (4 pcs) + BBQ Burger + Cold Drink",
+    price: "₹150",
+    category: "Combos",
+    isHot: true,
+  },
+  {
+    name: "Combo for 2 - Kurkure Momos (6 pcs) + Dip + Sandwich (4 pcs) + 2 Cold Drinks",
+    price: "₹260",
+    category: "Combos",
+    isHot: true,
+  },
 
   // 🥟 MOMOS
   { name: "Special Kurkure Momo (8 pcs)", price: "₹140", category: "Momos" },
@@ -56,33 +71,6 @@ const data: Item[] = [
   { name: "Hot Coffee", price: "₹40", category: "Hot Beverages" },
   { name: "Tea", price: "₹25", category: "Hot Beverages" },
   { name: "Kulhad Tea", price: "₹30", category: "Hot Beverages" },
-
-  // 🎯 COMBOS
-  {
-    name: "Kurkure Momo + Fries + Sandwich + 2 Drinks",
-    price: "₹450",
-    category: "Combos",
-  },
-  {
-    name: "Kurkure Momo + Dip + 2 Drinks + Sandwich",
-    price: "₹280",
-    category: "Combos",
-  },
-  {
-    name: "Sandwich + Fries + 2 Drinks",
-    price: "₹200",
-    category: "Combos",
-  },
-  {
-    name: "Paneer Corn Pizza + Kurkure Momos + 2 Drinks",
-    price: "₹380",
-    category: "Combos",
-  },
-  {
-    name: "Corn Pizza + Fries + 2 Drinks",
-    price: "₹220",
-    category: "Combos",
-  },
 ];
 
 type Props = {
@@ -99,48 +87,83 @@ export default function MenuList({ category, setCart, setOpen }: Props) {
       : data.filter((item) => item.category === category);
   }, [category]);
 
- const handleAdd = (item: Item) => {
-  setCart((prev: any) => [...prev, item]);
-  setTimeout(() => setOpen(true), 100);
-};
+  const handleAdd = (item: Item) => {
+    setCart((prev: any) => [...prev, item]);
+    setTimeout(() => setOpen(true), 100);
+  };
+
+  // 🔥 HOT ITEMS (TOP SECTION)
+  const hotItems = data.filter((item) => item.isHot);
+
   return (
     <section className="py-10 px-4 md:px-6 relative z-10">
 
-      <div className="max-w-3xl mx-auto space-y-4">
+      {/* 🔥 TOP HOT SECTION */}
+      {category === "All Items" || category === "Combos" ? (
+        <div className="max-w-3xl mx-auto mb-8">
+          <h3 className="text-xl text-amber-400 font-bold mb-4 flex items-center gap-2">
+            <Flame size={20} /> Best Seller Combos
+          </h3>
 
+          <div className="space-y-4">
+            {hotItems.map((item, i) => (
+              <div
+                key={i}
+                className="p-4 rounded-xl bg-gradient-to-r from-amber-500/20 to-yellow-300/10 border border-amber-400/30"
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="text-white font-semibold text-sm md:text-base">
+                    {item.name}
+                  </h3>
+
+                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                    <Flame size={12} /> HOT
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-yellow-400 font-bold">
+                    {item.price}
+                  </span>
+
+                  <button
+                    onClick={() => handleAdd(item)}
+                    className="bg-yellow-400 text-black px-4 py-2 rounded-full text-xs hover:scale-110 transition"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* NORMAL MENU */}
+      <div className="max-w-3xl mx-auto space-y-4">
         {filtered.map((item, i) => (
           <div
             key={i}
-            className="flex flex-col sm:flex-row sm:justify-between sm:items-center 
-                       gap-3 p-4 rounded-xl 
-                       bg-white/10 border border-white/10 backdrop-blur-md
-                       hover:scale-[1.02] transition"
+            className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 p-4 rounded-xl bg-white/10 border border-white/10 backdrop-blur-md hover:scale-[1.02] transition"
           >
-
-            <div>
-              <h3 className="text-white font-semibold text-base md:text-lg">
-                {item.name}
-              </h3>
-            </div>
+            <h3 className="text-white font-semibold text-base md:text-lg">
+              {item.name}
+            </h3>
 
             <div className="flex justify-between items-center sm:gap-4">
-
-              <span className="text-yellow-400 font-bold text-sm md:text-base">
+              <span className="text-yellow-400 font-bold">
                 {item.price}
               </span>
 
               <button
                 onClick={() => handleAdd(item)}
-                className="bg-yellow-400 text-black px-4 py-2 rounded-full text-xs md:text-sm 
-                           hover:scale-110 active:scale-95 transition"
+                className="bg-yellow-400 text-black px-4 py-2 rounded-full text-xs md:text-sm hover:scale-110 transition"
               >
                 Add
               </button>
             </div>
-
           </div>
         ))}
-
       </div>
 
     </section>

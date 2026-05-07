@@ -14,10 +14,10 @@ const categories = [
 ];
 
 export default function MenuTabs({ setCategory }: any) {
-  const [active, setActive] = useState("Momos");
+  const [active, setActive] = useState("Combos");
 
   useEffect(() => {
-    setCategory("Momos");
+    setCategory("Combos");
   }, []);
 
   return (
