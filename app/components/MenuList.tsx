@@ -24,11 +24,11 @@ const data: Item[] = [
     category: "Combos",
     isHot: true,
   },
-    {
-    name: "Kurkure Momo + Fries + Sandwich + 2 Drinks",
-    price: "₹450",
-    category: "Combos",
-  },
+{
+  name: "Kurkure Momo (8 pcs) + Fries + Sandwich (4 pcs) + Any 2 Shakes / Mojito (Choose Any)",
+  price: "₹450",
+  category: "Combos",
+},
   {
     name: "Kurkure Momo + Dip + 2 Drinks + Sandwich",
     price: "₹280",
