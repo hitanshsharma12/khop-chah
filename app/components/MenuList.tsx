@@ -24,6 +24,31 @@ const data: Item[] = [
     category: "Combos",
     isHot: true,
   },
+    {
+    name: "Kurkure Momo + Fries + Sandwich + 2 Drinks",
+    price: "₹450",
+    category: "Combos",
+  },
+  {
+    name: "Kurkure Momo + Dip + 2 Drinks + Sandwich",
+    price: "₹280",
+    category: "Combos",
+  },
+  {
+    name: "Sandwich + Fries + 2 Drinks",
+    price: "₹200",
+    category: "Combos",
+  },
+  {
+    name: "Paneer Corn Pizza + Kurkure Momos + 2 Drinks",
+    price: "₹380",
+    category: "Combos",
+  },
+  {
+    name: "Corn Pizza + Fries + 2 Drinks",
+    price: "₹220",
+    category: "Combos",
+  },
 
   // 🥟 MOMOS
   { name: "Special Kurkure Momo (8 pcs)", price: "₹140", category: "Momos" },
