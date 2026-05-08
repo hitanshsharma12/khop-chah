@@ -4,56 +4,59 @@ let orderCount = 0;
 let lastDate = "";
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  const { name, phone, cart, total, time, quantities, address, parking } = body;
+    const {
+      name,
+      phone,
+      cart = [],
+      total,
+      time,
+      quantities = [],
+      address,
+      parking,
+    } = body;
 
-  // Daily reset
-  const today = new Date().toDateString();
-  if (today !== lastDate) {
-    orderCount = 0;
-    lastDate = today;
-  }
-
-  orderCount++;
-  const orderNumber = orderCount;
-
-  // ✅ FIX: timeZone: "Asia/Kolkata" added — without this, server uses UTC
-  // which is 5:30 hours behind IST, causing wrong time in WhatsApp message
-  const orderTime = new Date().toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-
-  const itemsText = (cart ?? [])
-  .map((item: any, i: number) => {
-    let price = item.price;
-    let sizeText = "";
-
-    if (typeof price === "string" && price.includes("/")) {
-      const options = price.split("/").map((p: string) => p.trim());
-
-      // 👇 agar 3 prices hain → S M L
-      if (options.length === 3) {
-        price = options[0]; // default S
-        sizeText = " (S)";
-      }
-
-      // 👇 agar 2 prices hain → small/large type
-      else if (options.length === 2) {
-        price = options[0];
-        sizeText = " (Small)";
-      }
+    const today = new Date().toDateString();
+    if (today !== lastDate) {
+      orderCount = 0;
+      lastDate = today;
     }
 
-    return `• ${item.name}${sizeText} ×${quantities?.[i] ?? 1} - ${price}`;
-  })
-  .join("\n");
+    orderCount++;
+    const orderNumber = orderCount;
 
-  const parkingText = parking ? "Yes" : "No";
+    const orderTime = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
 
-  const message = `
+    const itemsText = cart
+      .map((item: any, i: number) => {
+        let price = item.price;
+        let sizeText = "";
+
+        if (typeof price === "string" && price.includes("/")) {
+          const options = price.split("/").map((p: string) => p.trim());
+
+          if (options.length === 3) {
+            price = options[0];
+            sizeText = " (S)";
+          } else if (options.length === 2) {
+            price = options[0];
+            sizeText = " (Small)";
+          }
+        }
+
+        return `• ${item.name}${sizeText} ×${quantities[i] ?? 1} - ${price}`;
+      })
+      .join("\n");
+
+    const parkingText = parking ? "Yes" : "No";
+
+    const message = `
 ● Order #${orderNumber}
 
 ● Café Khopcha Order
@@ -75,12 +78,15 @@ ${address}
 
 ● Total: ₹${total}
 
-⚠️ Note: Delivery charges will be extra as per location
+⚠️ Delivery charges extra
 `.trim();
 
-  const whatsappNumber = "917986383165";
+    const whatsappNumber = "917986383165";
 
-  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-  return Response.json({ url });
+    return Response.json({ success: true, url });
+  } catch {
+    return Response.json({ success: false });
+  }
 }

@@ -105,12 +105,15 @@ type Props = {
 };
 
 export default function MenuList({ category, setCart, setOpen }: Props) {
-
-  const filtered = useMemo(() => {
-    return category === "All Items"
+const filtered = useMemo(() => {
+  const base =
+    category === "All Items"
       ? data
       : data.filter((item) => item.category === category);
-  }, [category]);
+
+  // ❌ remove HOT items from normal list
+  return base.filter((item) => !item.isHot);
+}, [category]);
 
   const handleAdd = (item: Item) => {
     setCart((prev: any) => [...prev, item]);
