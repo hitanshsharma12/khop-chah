@@ -5,11 +5,16 @@ import { Flame } from "lucide-react";
 
 type Item = {
   name: string;
-  price: string;
+  price?: string;
   category: string;
   isHot?: boolean;
-};
 
+  // ✅ NEW
+  sizes?: {
+    label: string;
+    price: number;
+  }[];
+};
 const data: Item[] = [
   // 🔥 SPECIAL COMBOS (TOP HIGHLIGHT)
   {
@@ -70,13 +75,52 @@ const data: Item[] = [
   { name: "Chilli Lava Burger", price: "₹50", category: "Burgers" },
   { name: "Paneer Ginger Burger", price: "₹65", category: "Burgers" },
 
-  // 🍕 PIZZA
-  { name: "Margherita Pizza (S/M/L)", price: "₹110 / 190 / 230", category: "Pizza" },
-  { name: "Paneer Corn Pizza (S/M/L)", price: "₹140 / 220 / 300", category: "Pizza" },
-  { name: "Farmhouse Special (S/M/L)", price: "₹180 / 260 / 300", category: "Pizza" },
-  { name: "Veg Supreme (S/M/L)", price: "₹200 / 340 / 500", category: "Pizza" },
-  { name: "Full Loaded Pizza (S/M/L)", price: "₹250 / 380 / 470", category: "Pizza" },
-
+ // 🍕 PIZZA
+{
+  name: "Margherita Pizza",
+  category: "Pizza",
+  sizes: [
+    { label: "S", price: 110 },
+    { label: "M", price: 190 },
+    { label: "L", price: 230 },
+  ],
+},
+{
+  name: "Paneer Corn Pizza",
+  category: "Pizza",
+  sizes: [
+    { label: "S", price: 140 },
+    { label: "M", price: 220 },
+    { label: "L", price: 300 },
+  ],
+},
+{
+  name: "Farmhouse Special",
+  category: "Pizza",
+  sizes: [
+    { label: "S", price: 180 },
+    { label: "M", price: 260 },
+    { label: "L", price: 300 },
+  ],
+},
+{
+  name: "Veg Supreme",
+  category: "Pizza",
+  sizes: [
+    { label: "S", price: 200 },
+    { label: "M", price: 340 },
+    { label: "L", price: 500 },
+  ],
+},
+{
+  name: "Full Loaded Pizza",
+  category: "Pizza",
+  sizes: [
+    { label: "S", price: 250 },
+    { label: "M", price: 380 },
+    { label: "L", price: 470 },
+  ],
+},
   // 🥤 DRINKS
   { name: "Mint Mojito", price: "₹80", category: "Drinks" },
   { name: "Black Current Mojito", price: "₹80", category: "Drinks" },
@@ -115,10 +159,19 @@ const filtered = useMemo(() => {
   return base.filter((item) => !item.isHot);
 }, [category]);
 
-  const handleAdd = (item: Item) => {
-    setCart((prev: any) => [...prev, item]);
-    setTimeout(() => setOpen(true), 100);
+ const handleAdd = (item: Item, size?: { label: string; price: number }) => {
+  const finalItem = {
+    ...item,
+    selectedSize: size?.label || null,
+
+    // ✅ Correct final price
+    finalPrice: size ? `₹${size.price}` : item.price,
   };
+
+  setCart((prev: any) => [...prev, finalItem]);
+
+  setTimeout(() => setOpen(true), 100);
+};
 
   // 🔥 HOT ITEMS (TOP SECTION)
   const hotItems = data.filter((item) => item.isHot);
@@ -178,18 +231,36 @@ const filtered = useMemo(() => {
               {item.name}
             </h3>
 
-            <div className="flex justify-between items-center sm:gap-4">
-              <span className="text-yellow-400 font-bold">
-                {item.price}
-              </span>
+       <div className="flex justify-between items-center sm:gap-4 flex-wrap">
 
-              <button
-                onClick={() => handleAdd(item)}
-                className="bg-yellow-400 text-black px-4 py-2 rounded-full text-xs md:text-sm hover:scale-110 transition"
-              >
-                Add
-              </button>
-            </div>
+  {item.sizes ? (
+    <div className="flex gap-2 flex-wrap">
+      {item.sizes.map((size) => (
+        <button
+          key={size.label}
+          onClick={() => handleAdd(item, size)}
+          className="bg-yellow-400 text-black px-3 py-2 rounded-full text-xs hover:scale-110 transition"
+        >
+          {size.label} - ₹{size.price}
+        </button>
+      ))}
+    </div>
+  ) : (
+    <>
+      <span className="text-yellow-400 font-bold">
+        {item.price}
+      </span>
+
+      <button
+        onClick={() => handleAdd(item)}
+        className="bg-yellow-400 text-black px-4 py-2 rounded-full text-xs md:text-sm hover:scale-110 transition"
+      >
+        Add
+      </button>
+    </>
+  )}
+
+</div>
           </div>
         ))}
       </div>

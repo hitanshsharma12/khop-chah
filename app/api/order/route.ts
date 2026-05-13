@@ -18,7 +18,9 @@ export async function POST(req: Request) {
       parking,
     } = body;
 
+    // ✅ Reset daily order count
     const today = new Date().toDateString();
+
     if (today !== lastDate) {
       orderCount = 0;
       lastDate = today;
@@ -27,35 +29,31 @@ export async function POST(req: Request) {
     orderCount++;
     const orderNumber = orderCount;
 
+    // ✅ Indian date/time
     const orderTime = new Date().toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",
       dateStyle: "medium",
       timeStyle: "short",
     });
 
+    // ✅ Correct item formatting
     const itemsText = cart
       .map((item: any, i: number) => {
-        let price = item.price;
-        let sizeText = "";
+        const price = item.finalPrice || item.price;
 
-        if (typeof price === "string" && price.includes("/")) {
-          const options = price.split("/").map((p: string) => p.trim());
+        const sizeText = item.selectedSize
+          ? ` (${item.selectedSize})`
+          : "";
 
-          if (options.length === 3) {
-            price = options[0];
-            sizeText = " (S)";
-          } else if (options.length === 2) {
-            price = options[0];
-            sizeText = " (Small)";
-          }
-        }
-
-        return `• ${item.name}${sizeText} ×${quantities[i] ?? 1} - ${price}`;
+        return `• ${item.name}${sizeText} ×${
+          quantities[i] ?? 1
+        } - ${price}`;
       })
       .join("\n");
 
     const parkingText = parking ? "Yes" : "No";
 
+    // ✅ Final WhatsApp message
     const message = `
 ● Order #${orderNumber}
 
@@ -81,12 +79,22 @@ ${address}
 ⚠️ Delivery charges extra
 `.trim();
 
+    // ✅ Your WhatsApp number
     const whatsappNumber = "917986383165";
 
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      message
+    )}`;
 
-    return Response.json({ success: true, url });
-  } catch {
-    return Response.json({ success: false });
+    return Response.json({
+      success: true,
+      url,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return Response.json({
+      success: false,
+    });
   }
 }

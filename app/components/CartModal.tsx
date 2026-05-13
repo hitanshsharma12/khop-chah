@@ -20,8 +20,10 @@ const isIOS = () =>
 const openWhatsApp = async (getUrl: () => Promise<string>) => {
   if (isIOS()) {
     const waWindow = window.open("", "_blank");
+
     try {
       const url = await getUrl();
+
       if (waWindow && !waWindow.closed) {
         waWindow.location.href = url;
       } else {
@@ -37,15 +39,25 @@ const openWhatsApp = async (getUrl: () => Promise<string>) => {
   }
 };
 
-export default function CartModal({ cart, setCart, setOpen }: any) {
+export default function CartModal({
+  cart,
+  setCart,
+  setOpen,
+}: any) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [time, setTime] = useState("");
   const [address, setAddress] = useState("");
   const [parking, setParking] = useState(false);
 
-  const [quantities, setQuantities] = useState(cart.map(() => 1));
-  const [selectedSize, setSelectedSize] = useState(cart.map(() => 0));
+  const [quantities, setQuantities] = useState(
+    cart.map(() => 1)
+  );
+
+  // ✅ FIXED
+  const [selectedSize, setSelectedSize] = useState(
+    cart.map((item: any) => item.selectedSizeIndex || 0)
+  );
 
   const [location, setLocation] = useState<{
     lat: number;
@@ -58,9 +70,13 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       alert("Location not supported");
       return;
     }
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
       },
       () => {
         alert("Permission denied ❌");
@@ -71,44 +87,65 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   // 📞 PHONE VALIDATION
   const handlePhoneChange = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
-    if (cleaned.length <= 10) setPhone(cleaned);
+
+    if (cleaned.length <= 10) {
+      setPhone(cleaned);
+    }
   };
 
-  const isValidPhone = (num: string) => /^[0-9]{10}$/.test(num);
+  const isValidPhone = (num: string) =>
+    /^[0-9]{10}$/.test(num);
 
-  // 💰 PRICE
+  // 💰 PRICE PARSER
   const getPrices = (price: string) => {
     return price.match(/\d+/g)?.map(Number) || [0];
   };
 
+  // ➕➖ UPDATE QUANTITY
   const updateQty = (i: number, val: number) => {
     const newQty = [...quantities];
+
     newQty[i] = Math.max(1, newQty[i] + val);
+
     setQuantities(newQty);
   };
 
+  // ❌ REMOVE ITEM
   const handleRemove = (i: number) => {
     setCart((prev: any) =>
       prev.filter((_: any, index: number) => index !== i)
     );
+
     setQuantities((prev: any) =>
       prev.filter((_: any, index: number) => index !== i)
     );
+
     setSelectedSize((prev: any) =>
       prev.filter((_: any, index: number) => index !== i)
     );
   };
 
-  const total = cart.reduce((acc: number, item: any, i: number) => {
-    const prices = getPrices(item.price);
-    const price = prices[selectedSize[i]] || prices[0];
-    return acc + price * quantities[i];
-  }, 0);
+  // ✅ FIXED TOTAL
+  const total = cart.reduce(
+    (acc: number, item: any, i: number) => {
+      const prices = item.sizes
+        ? item.sizes.map((s: any) => s.price)
+        : getPrices(item.price || "");
+
+      const price =
+        prices[selectedSize[i]] || prices[0] || 0;
+
+      return acc + price * quantities[i];
+    },
+    0
+  );
 
   // 🧾 COD ORDER
   const handleOrder = async () => {
     if (!name || !phone || !time || !address) {
-      alert("⚠️ Fill all details (Name, Phone, Time, Landmark)");
+      alert(
+        "⚠️ Fill all details (Name, Phone, Time, Landmark)"
+      );
       return;
     }
 
@@ -117,7 +154,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       return;
     }
 
-    // ✅ Minimum order validation
     if (total < MIN_ORDER) {
       alert(`⚠️ Minimum order value is ₹${MIN_ORDER}`);
       return;
@@ -127,7 +163,10 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       await openWhatsApp(async () => {
         const res = await fetch("/api/order", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
+
           body: JSON.stringify({
             name,
             phone,
@@ -142,7 +181,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
             payment: "COD",
           }),
         });
+
         const data = await res.json();
+
         return data.url;
       });
 
@@ -156,7 +197,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
   // 💳 ONLINE PAYMENT
   const handleOnlinePayment = async () => {
     if (!name || !phone || !time || !address) {
-      alert("⚠️ Fill all details (Name, Phone, Time, Address)");
+      alert(
+        "⚠️ Fill all details (Name, Phone, Time, Address)"
+      );
       return;
     }
 
@@ -165,7 +208,6 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
       return;
     }
 
-    // ✅ Minimum order validation
     if (total < MIN_ORDER) {
       alert(`⚠️ Minimum order value is ₹${MIN_ORDER}`);
       return;
@@ -173,8 +215,18 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
 
     const res = await fetch("/api/payment", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: total, name, phone, cart, address }),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        amount: total,
+        name,
+        phone,
+        cart,
+        address,
+      }),
     });
 
     const data = await res.json();
@@ -194,7 +246,11 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           await openWhatsApp(async () => {
             const orderRes = await fetch("/api/order", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
               body: JSON.stringify({
                 name,
                 phone,
@@ -209,7 +265,9 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
                 payment: "Online",
               }),
             });
+
             const orderData = await orderRes.json();
+
             return orderData.url;
           });
 
@@ -222,6 +280,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     };
 
     const rzp = new window.Razorpay(options);
+
     rzp.open();
   };
 
@@ -229,6 +288,7 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50 p-3">
       <div className="bg-[#f8f5f2] w-full max-w-2xl rounded-xl p-4 md:p-6 overflow-y-auto max-h-[90vh] relative">
 
+        {/* ❌ CLOSE */}
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-4 text-red-500 text-xl"
@@ -236,50 +296,94 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           ✕
         </button>
 
-        <h2 className="text-xl font-semibold mb-4">Your Order</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Your Order
+        </h2>
 
+        {/* 🛒 CART ITEMS */}
         {cart.map((item: any, i: number) => {
-          const prices = getPrices(item.price);
-          const sizes = ["S", "M", "L"];
+
+          // ✅ FIXED PRICE LOGIC
+          const prices = item.sizes
+            ? item.sizes.map((s: any) => s.price)
+            : getPrices(item.price || "");
+
+          // ✅ FIXED SIZE LABELS
+          const sizes = item.sizes
+            ? item.sizes.map((s: any) => s.label)
+            : ["S", "M", "L"];
 
           return (
-            <div key={i} className="border p-3 rounded-lg mb-3 bg-white">
-              <h3 className="font-semibold">{item.name}</h3>
+            <div
+              key={i}
+              className="border p-3 rounded-lg mb-3 bg-white"
+            >
+              <h3 className="font-semibold">
+                {item.name}
+              </h3>
 
+              {/* 🍕 SIZE SELECTOR */}
               {prices.length > 1 && (
-                <div className="flex gap-2 my-2">
-                  {prices.map((p: number, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        const newSize = [...selectedSize];
-                        newSize[i] = idx;
-                        setSelectedSize(newSize);
-                      }}
-                      className={`px-3 py-1 rounded-full text-xs ${
-                        selectedSize[i] === idx
-                          ? "bg-[#8B5E3C] text-white"
-                          : "bg-gray-200"
-                      }`}
-                    >
-                      {sizes[idx]} ₹{p}
-                    </button>
-                  ))}
+                <div className="flex gap-2 my-2 flex-wrap">
+                  {prices.map(
+                    (p: number, idx: number) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          const newSize = [
+                            ...selectedSize,
+                          ];
+
+                          newSize[i] = idx;
+
+                          setSelectedSize(newSize);
+                        }}
+                        className={`px-3 py-1 rounded-full text-xs ${
+                          selectedSize[i] === idx
+                            ? "bg-[#8B5E3C] text-white"
+                            : "bg-gray-200"
+                        }`}
+                      >
+                        {sizes[idx]} ₹{p}
+                      </button>
+                    )
+                  )}
                 </div>
               )}
 
+              {/* 💰 ITEM PRICE */}
               <p className="text-red-500 font-semibold">
-                ₹{prices[selectedSize[i]] || prices[0]}
+                ₹
+                {prices[selectedSize[i]] ||
+                  prices[0]}
               </p>
 
+              {/* ➕➖ */}
               <div className="flex justify-between items-center mt-2">
+
                 <div className="flex items-center gap-2">
-                  <button onClick={() => updateQty(i, -1)} className="px-2 bg-gray-200 rounded">-</button>
+                  <button
+                    onClick={() => updateQty(i, -1)}
+                    className="px-2 bg-gray-200 rounded"
+                  >
+                    -
+                  </button>
+
                   <span>{quantities[i]}</span>
-                  <button onClick={() => updateQty(i, 1)} className="px-2 bg-gray-200 rounded">+</button>
+
+                  <button
+                    onClick={() => updateQty(i, 1)}
+                    className="px-2 bg-gray-200 rounded"
+                  >
+                    +
+                  </button>
                 </div>
 
-                <button onClick={() => handleRemove(i)} className="text-red-500 text-sm">
+                {/* ❌ REMOVE */}
+                <button
+                  onClick={() => handleRemove(i)}
+                  className="text-red-500 text-sm"
+                >
                   Remove
                 </button>
               </div>
@@ -287,43 +391,57 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           );
         })}
 
+        {/* 💰 TOTAL */}
         <div className="text-right font-semibold text-lg mb-4">
           Total: ₹{total}
         </div>
 
+        {/* 👤 NAME */}
         <input
           type="text"
           placeholder="Full Name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) =>
+            setName(e.target.value)
+          }
           className="border p-2 rounded-lg w-full mb-2"
         />
 
+        {/* 📞 PHONE */}
         <input
           type="tel"
           inputMode="numeric"
           placeholder="Phone (10 digit)"
           value={phone}
-          onChange={(e) => handlePhoneChange(e.target.value)}
+          onChange={(e) =>
+            handlePhoneChange(e.target.value)
+          }
           className="border p-2 rounded-lg w-full mb-2"
         />
 
+        {/* ⏰ TIME */}
         <input
           type="text"
           placeholder="Pickup Time"
           value={time}
-          onChange={(e) => setTime(e.target.value)}
+          onChange={(e) =>
+            setTime(e.target.value)
+          }
           className="border p-2 rounded-lg w-full mb-3"
         />
 
+        {/* 📍 ADDRESS */}
         <input
           type="text"
           placeholder="Location Description"
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={(e) =>
+            setAddress(e.target.value)
+          }
           className="border p-2 rounded-lg w-full mb-2"
         />
 
+        {/* 🚀 BUTTONS */}
         <div className="flex gap-2">
           <button
             onClick={handleOrder}
@@ -340,12 +458,13 @@ export default function CartModal({ cart, setCart, setOpen }: any) {
           </button>
         </div>
 
-        {/* 🚚 Delivery Notice */}
+        {/* 🚚 DELIVERY */}
         <p className="text-center text-xs text-gray-500 mt-3">
-          🚚 Delivery charges will be extra as per location
+          🚚 Delivery charges will be extra as per
+          location
         </p>
 
-        {/* ⚠️ Minimum Order */}
+        {/* ⚠️ MIN ORDER */}
         <p className="text-center text-sm text-red-500 font-medium mt-2">
           ⚠️ Minimum order value is ₹{MIN_ORDER}
         </p>
