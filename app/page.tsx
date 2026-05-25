@@ -18,14 +18,14 @@ export default function Home() {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
-      <Navbar />
-      <Hero />
+    // <>
+    //   {/* <Navbar /> */}
+    //   <Hero />
 
-      {/* 🔥 MENU SECTION (SAME BACKGROUND) */}
-      <section className="relative">
+    //   {/* 🔥 MENU SECTION (SAME BACKGROUND) */}
+    //   <section className="relative">
 
-        {/* ✅ Background Image */}
+    //     {/* ✅ Background Image */}
         <Image
           src="/bg.jpg"
           alt="menu background"
